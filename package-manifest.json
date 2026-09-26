@@ -1,0 +1,372 @@
+{
+  "aircraftFamily": "Zibo Mod / LevelUp 737NG for X-Plane 12",
+  "modules": [
+    {
+      "conflictsWith": [],
+      "defaultEnabled": false,
+      "description": "Optional unofficial corrections to existing FMS behavior. CPDLC and Weight & Balance corrections apply only when those patches are selected.",
+      "displayName": "Intentional Fixes",
+      "installationOrder": 70,
+      "moduleId": "intentional-fixes-zibo",
+      "payloads": [
+        {
+          "path": "i01-gls-lp-record-resolution.json",
+          "sha256": "3e5a8672291ea4fcd49d49fde4d1d6a08a269045e6e42e3b180a0ff704413e1e",
+          "size": 13238
+        },
+        {
+          "path": "i02-i03-course-and-intercept.json",
+          "sha256": "fc536551770e18d7817a1bec05e4134730c81c111f557cbdd175a49809c4ab00",
+          "size": 48989
+        },
+        {
+          "path": "i04-hold-course-defaults.json",
+          "sha256": "d7e95bbacbf887ad43dffae798f9dd15442cdaee5f842aea5000535f118e682e",
+          "size": 25645
+        },
+        {
+          "path": "i05-app-normalization-and-if-merge.json",
+          "sha256": "cc7adb9372e2590ddc050f86948bc73eef05fc4d977132222a55ad935157beef",
+          "size": 22399
+        },
+        {
+          "path": "i06-cpdlc-response-origin-fallback.json",
+          "sha256": "3d2ed73dd9b13bf60d967ab36d32b4acdb1e81c3fd070cbad60790688038db07",
+          "size": 19968
+        },
+        {
+          "path": "i07-pause-at-td.json",
+          "sha256": "e78490915ad0935ccc37712e91c409ce36f6f88100fa92ac1d84b2a53bb6230d",
+          "size": 1801
+        },
+        {
+          "path": "i08-app-ref-resolution.json",
+          "sha256": "3417d3d554797f221cca63ca4ec0e8b509386462a5ce43ea6b925a03705dbf44",
+          "size": 13007
+        },
+        {
+          "path": "i09-hold-identity-route-mutations.json",
+          "sha256": "0d7ac9f1e8a9c341fb83bd8e7ac52524b2963ee9b17a8e34a1cb5c1ccccba9f7",
+          "size": 25566
+        },
+        {
+          "path": "i16-climb-restriction-domain.json",
+          "sha256": "0fb92b94ed018328029d13fd232047b4f53673232a3ae214d8bc6c6a762ee7bb",
+          "size": 2113
+        },
+        {
+          "path": "i24-n1-owner-and-oat-guard.json",
+          "sha256": "229cd7506ee33df731ec9a570a5a53d2baab9c58ebd10ed99bfd659367c75743",
+          "size": 5692
+        },
+        {
+          "path": "i27-manual-go-around-evidence.json",
+          "sha256": "2b8dc939554fd9ef1bef9a8b01f96423e1f6f6ca62edf38fe69e728198cd3a1e",
+          "size": 4973
+        },
+        {
+          "path": "i30-alt-intervention-constraint-release.json",
+          "sha256": "3bb3e308352fcfc4c65ff4a7653cb622f29391147cbb9aff8396e277bcf9db67",
+          "size": 11131
+        },
+        {
+          "path": "i34-clean-descent-rejoin-vvi.json",
+          "sha256": "2753c1983644e7056c57c98e7973c874b8529648144fdbe0bb183fb3de1a591f",
+          "size": 1794
+        },
+        {
+          "path": "i35-flight-phase-descent-guards.json",
+          "sha256": "67bb72e5d144f5a186110bcdbf43b98dfad707f49a00e3b2949543d650bafd2f",
+          "size": 5346
+        }
+      ],
+      "policy": "optional",
+      "requires": [],
+      "targets": [
+        {
+          "operation": "exact-text-replacements-v1",
+          "payload": "i01-gls-lp-record-resolution.json",
+          "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+          "sourceSha256": []
+        },
+        {
+          "operation": "exact-text-replacements-v1",
+          "payload": "i02-i03-course-and-intercept.json",
+          "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+          "sourceSha256": []
+        },
+        {
+          "operation": "exact-text-replacements-v1",
+          "payload": "i04-hold-course-defaults.json",
+          "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+          "sourceSha256": []
+        },
+        {
+          "operation": "exact-text-replacements-v1",
+          "payload": "i05-app-normalization-and-if-merge.json",
+          "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+          "sourceSha256": []
+        },
+        {
+          "operation": "exact-text-replacements-v1",
+          "payload": "i06-cpdlc-response-origin-fallback.json",
+          "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+          "sourceSha256": [],
+          "whenModulesSelected": [
+            "cpdlc"
+          ]
+        },
+        {
+          "operation": "exact-text-replacements-v1",
+          "payload": "i07-pause-at-td.json",
+          "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+          "sourceSha256": []
+        },
+        {
+          "operation": "exact-text-replacements-v1",
+          "payload": "i08-app-ref-resolution.json",
+          "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+          "sourceSha256": []
+        },
+        {
+          "operation": "exact-text-replacements-v1",
+          "payload": "i09-hold-identity-route-mutations.json",
+          "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+          "sourceSha256": []
+        },
+        {
+          "operation": "exact-text-replacements-v1",
+          "payload": "i16-climb-restriction-domain.json",
+          "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+          "sourceSha256": []
+        },
+        {
+          "operation": "exact-text-replacements-v1",
+          "payload": "i24-n1-owner-and-oat-guard.json",
+          "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+          "sourceSha256": []
+        },
+        {
+          "operation": "exact-text-replacements-v1",
+          "payload": "i27-manual-go-around-evidence.json",
+          "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+          "sourceSha256": []
+        },
+        {
+          "operation": "exact-text-replacements-v1",
+          "payload": "i30-alt-intervention-constraint-release.json",
+          "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+          "sourceSha256": []
+        },
+        {
+          "operation": "exact-text-replacements-v1",
+          "payload": "i34-clean-descent-rejoin-vvi.json",
+          "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+          "sourceSha256": []
+        },
+        {
+          "operation": "exact-text-replacements-v1",
+          "payload": "i35-flight-phase-descent-guards.json",
+          "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+          "sourceSha256": []
+        }
+      ]
+    },
+    {
+      "conflictsWith": [],
+      "defaultEnabled": false,
+      "description": "Optional unofficial corrections to existing FMS behavior. CPDLC and Weight & Balance corrections apply only when those patches are selected.",
+      "displayName": "Intentional Fixes",
+      "installationOrder": 71,
+      "moduleId": "intentional-fixes-levelup",
+      "payloads": [
+        {
+          "path": "i01-gls-lp-record-resolution.json",
+          "sha256": "3e5a8672291ea4fcd49d49fde4d1d6a08a269045e6e42e3b180a0ff704413e1e",
+          "size": 13238
+        },
+        {
+          "path": "i02-i03-course-and-intercept.json",
+          "sha256": "fc536551770e18d7817a1bec05e4134730c81c111f557cbdd175a49809c4ab00",
+          "size": 48989
+        },
+        {
+          "path": "i04-hold-course-defaults.json",
+          "sha256": "d7e95bbacbf887ad43dffae798f9dd15442cdaee5f842aea5000535f118e682e",
+          "size": 25645
+        },
+        {
+          "path": "i05-app-normalization-and-if-merge.json",
+          "sha256": "cc7adb9372e2590ddc050f86948bc73eef05fc4d977132222a55ad935157beef",
+          "size": 22399
+        },
+        {
+          "path": "i06-cpdlc-response-origin-fallback.json",
+          "sha256": "3d2ed73dd9b13bf60d967ab36d32b4acdb1e81c3fd070cbad60790688038db07",
+          "size": 19968
+        },
+        {
+          "path": "i07-pause-at-td.json",
+          "sha256": "e78490915ad0935ccc37712e91c409ce36f6f88100fa92ac1d84b2a53bb6230d",
+          "size": 1801
+        },
+        {
+          "path": "i08-app-ref-resolution.json",
+          "sha256": "3417d3d554797f221cca63ca4ec0e8b509386462a5ce43ea6b925a03705dbf44",
+          "size": 13007
+        },
+        {
+          "path": "i09-hold-identity-route-mutations.json",
+          "sha256": "0d7ac9f1e8a9c341fb83bd8e7ac52524b2963ee9b17a8e34a1cb5c1ccccba9f7",
+          "size": 25566
+        },
+        {
+          "path": "i16-climb-restriction-domain.json",
+          "sha256": "0fb92b94ed018328029d13fd232047b4f53673232a3ae214d8bc6c6a762ee7bb",
+          "size": 2113
+        },
+        {
+          "path": "i24-n1-owner-and-oat-guard.json",
+          "sha256": "229cd7506ee33df731ec9a570a5a53d2baab9c58ebd10ed99bfd659367c75743",
+          "size": 5692
+        },
+        {
+          "path": "i27-manual-go-around-evidence.json",
+          "sha256": "2b8dc939554fd9ef1bef9a8b01f96423e1f6f6ca62edf38fe69e728198cd3a1e",
+          "size": 4973
+        },
+        {
+          "path": "i30-alt-intervention-constraint-release.json",
+          "sha256": "3bb3e308352fcfc4c65ff4a7653cb622f29391147cbb9aff8396e277bcf9db67",
+          "size": 11131
+        },
+        {
+          "path": "i33-levelup-wb-zfw-gate.json",
+          "sha256": "553f0fb87dbb1efe36d51edf1aabf4fc29ca3ec2f1d0c9002fb189a7cbe5338d",
+          "size": 6985
+        },
+        {
+          "path": "i34-clean-descent-rejoin-vvi.json",
+          "sha256": "2753c1983644e7056c57c98e7973c874b8529648144fdbe0bb183fb3de1a591f",
+          "size": 1794
+        },
+        {
+          "path": "i35-flight-phase-descent-guards.json",
+          "sha256": "67bb72e5d144f5a186110bcdbf43b98dfad707f49a00e3b2949543d650bafd2f",
+          "size": 5346
+        }
+      ],
+      "policy": "optional",
+      "requires": [],
+      "targets": [
+        {
+          "operation": "exact-text-replacements-v1",
+          "payload": "i01-gls-lp-record-resolution.json",
+          "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+          "sourceSha256": []
+        },
+        {
+          "operation": "exact-text-replacements-v1",
+          "payload": "i02-i03-course-and-intercept.json",
+          "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+          "sourceSha256": []
+        },
+        {
+          "operation": "exact-text-replacements-v1",
+          "payload": "i04-hold-course-defaults.json",
+          "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+          "sourceSha256": []
+        },
+        {
+          "operation": "exact-text-replacements-v1",
+          "payload": "i05-app-normalization-and-if-merge.json",
+          "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+          "sourceSha256": []
+        },
+        {
+          "operation": "exact-text-replacements-v1",
+          "payload": "i06-cpdlc-response-origin-fallback.json",
+          "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+          "sourceSha256": [],
+          "whenModulesSelected": [
+            "cpdlc"
+          ]
+        },
+        {
+          "operation": "exact-text-replacements-v1",
+          "payload": "i07-pause-at-td.json",
+          "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+          "sourceSha256": []
+        },
+        {
+          "operation": "exact-text-replacements-v1",
+          "payload": "i08-app-ref-resolution.json",
+          "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+          "sourceSha256": []
+        },
+        {
+          "operation": "exact-text-replacements-v1",
+          "payload": "i09-hold-identity-route-mutations.json",
+          "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+          "sourceSha256": []
+        },
+        {
+          "operation": "exact-text-replacements-v1",
+          "payload": "i16-climb-restriction-domain.json",
+          "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+          "sourceSha256": []
+        },
+        {
+          "operation": "exact-text-replacements-v1",
+          "payload": "i24-n1-owner-and-oat-guard.json",
+          "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+          "sourceSha256": []
+        },
+        {
+          "operation": "exact-text-replacements-v1",
+          "payload": "i27-manual-go-around-evidence.json",
+          "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+          "sourceSha256": []
+        },
+        {
+          "operation": "exact-text-replacements-v1",
+          "payload": "i30-alt-intervention-constraint-release.json",
+          "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+          "sourceSha256": []
+        },
+        {
+          "operation": "exact-text-replacements-v1",
+          "payload": "i33-levelup-wb-zfw-gate.json",
+          "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+          "sourceSha256": [],
+          "whenModulesSelected": [
+            "weight-and-balance"
+          ]
+        },
+        {
+          "operation": "exact-text-replacements-v1",
+          "payload": "i34-clean-descent-rejoin-vvi.json",
+          "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+          "sourceSha256": []
+        },
+        {
+          "operation": "exact-text-replacements-v1",
+          "payload": "i35-flight-phase-descent-guards.json",
+          "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+          "sourceSha256": []
+        }
+      ]
+    }
+  ],
+  "packageId": "wahltho.zibo-40535.intentional-fixes",
+  "packageType": "compatibilityPackage",
+  "packageVersion": "0.1.1",
+  "repositoryUrl": "https://github.com/wahltho/X-Plane-Zibo-LevelUp-737NG-Intentional-Fixes",
+  "restartRequired": true,
+  "schemaVersion": 5,
+  "supportedProducts": [
+    "zibo-737ng",
+    "levelup-737ng"
+  ],
+  "supportedUpstreamReleases": []
+}

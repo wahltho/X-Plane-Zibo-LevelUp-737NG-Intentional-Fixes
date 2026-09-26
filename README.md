@@ -30,6 +30,15 @@ A strict standalone installer source is available as `z_Install.py`; see
 installs the 13 unconditional payload documents representing 14 fix families.
 Aircraft with any other Lua patch must use the Maintenance Toolkit.
 
+The separate `0.1.1` MTK release asset is generated with
+`python3 tools/build_mtk_package.py --check --archive <output.zip>`. It is a
+schema-5 compatibility source for the optional Intentional Fixes selection in
+the Zibo and LevelUp catalog groups. Its Zibo module omits the LevelUp-only I33
+target; the LevelUp module applies I33 only when Weight & Balance is selected.
+Both apply I06 only when CPDLC is selected. The asset does not contain a full
+aircraft Lua file and does not replace the standalone `0.1.0` installer.
+Toolkit 0.21.1 or newer is required for these structural insertions.
+
 Product rules:
 
 - one user-visible `Intentional Fixes` selection, installed after all selected

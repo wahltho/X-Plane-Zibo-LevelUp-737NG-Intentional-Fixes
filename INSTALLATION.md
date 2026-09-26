@@ -1,5 +1,12 @@
 # Standalone installation — clean .35 only
 
+For an aircraft with other MTK-managed Lua patches, select **Intentional
+Fixes** in the Toolkit's Zibo or LevelUp patch group instead. The MTK source
+asset is separate from this standalone installer and requires Toolkit 0.21.1
+or newer. If this standalone installer has already been used, uninstall it
+with the same installer before letting the Toolkit manage the file; the
+Toolkit will not adopt an unverified standalone backup.
+
 > This installer is unofficial and is not supported by Zibo, LevelUp or
 > Laminar Research. Support is provided only through the
 > [wahltho Discord server](https://discord.gg/ySS88PMuyC). Do not request
