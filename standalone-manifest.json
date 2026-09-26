@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "packageId": "wahltho.zibo-40535.intentional-fixes.clean-only",
+  "packageVersion": "0.1.0",
+  "displayName": "Zibo / LevelUp 737NG Intentional Fixes (Clean .35 only)",
+  "aircraftFamilies": ["Zibo B737-800X", "LevelUp 737NG Series"],
+  "target": {
+    "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+    "sourceSha256": "ff313b0e88c62845ad1c4a2b1f4bd599f57d8799e8d6707bfc10a3369fd63a8e",
+    "resultSha256": "49a6ab1f077bca893123f476873ec5e7c9af1d18e31570996a697403ae2c3f70",
+    "baselineId": "zibo-4.05.35-shared-by-zibo-and-levelup"
+  },
+  "includedFamilies": ["I01", "I02", "I03", "I04", "I05", "I07", "I08", "I09", "I16", "I24", "I27", "I30", "I34", "I35"],
+  "excludedConditionalFamilies": ["I06", "I14", "I33"],
+  "baselineSatisfiedFamilies": ["I29"],
+  "payloads": [
+    { "path": "src/fixes/i01-gls-lp-record-resolution.json", "size": 13238, "sha256": "3e5a8672291ea4fcd49d49fde4d1d6a08a269045e6e42e3b180a0ff704413e1e" },
+    { "path": "src/fixes/i02-i03-course-and-intercept.json", "size": 48989, "sha256": "fc536551770e18d7817a1bec05e4134730c81c111f557cbdd175a49809c4ab00" },
+    { "path": "src/fixes/i04-hold-course-defaults.json", "size": 25645, "sha256": "d7e95bbacbf887ad43dffae798f9dd15442cdaee5f842aea5000535f118e682e" },
+    { "path": "src/fixes/i05-app-normalization-and-if-merge.json", "size": 22399, "sha256": "cc7adb9372e2590ddc050f86948bc73eef05fc4d977132222a55ad935157beef" },
+    { "path": "src/fixes/i07-pause-at-td.json", "size": 1801, "sha256": "e78490915ad0935ccc37712e91c409ce36f6f88100fa92ac1d84b2a53bb6230d" },
+    { "path": "src/fixes/i08-app-ref-resolution.json", "size": 13007, "sha256": "3417d3d554797f221cca63ca4ec0e8b509386462a5ce43ea6b925a03705dbf44" },
+    { "path": "src/fixes/i09-hold-identity-route-mutations.json", "size": 25566, "sha256": "0d7ac9f1e8a9c341fb83bd8e7ac52524b2963ee9b17a8e34a1cb5c1ccccba9f7" },
+    { "path": "src/fixes/i16-climb-restriction-domain.json", "size": 2113, "sha256": "0fb92b94ed018328029d13fd232047b4f53673232a3ae214d8bc6c6a762ee7bb" },
+    { "path": "src/fixes/i24-n1-owner-and-oat-guard.json", "size": 5692, "sha256": "229cd7506ee33df731ec9a570a5a53d2baab9c58ebd10ed99bfd659367c75743" },
+    { "path": "src/fixes/i27-manual-go-around-evidence.json", "size": 4973, "sha256": "2b8dc939554fd9ef1bef9a8b01f96423e1f6f6ca62edf38fe69e728198cd3a1e" },
+    { "path": "src/fixes/i30-alt-intervention-constraint-release.json", "size": 11131, "sha256": "3bb3e308352fcfc4c65ff4a7653cb622f29391147cbb9aff8396e277bcf9db67" },
+    { "path": "src/fixes/i34-clean-descent-rejoin-vvi.json", "size": 1794, "sha256": "2753c1983644e7056c57c98e7973c874b8529648144fdbe0bb183fb3de1a591f" },
+    { "path": "src/fixes/i35-flight-phase-descent-guards.json", "size": 5346, "sha256": "67bb72e5d144f5a186110bcdbf43b98dfad707f49a00e3b2949543d650bafd2f" }
+  ]
+}

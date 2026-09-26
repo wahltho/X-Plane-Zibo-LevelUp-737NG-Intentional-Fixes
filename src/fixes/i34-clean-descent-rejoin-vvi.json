@@ -1,0 +1,37 @@
+{
+  "format": "exact-text-replacements-v1",
+  "replacements": [
+    {
+      "name": "I34 limit clean-descent rejoin demand at or below target speed",
+      "oldLines": [
+        "\t\t\t\t\t\tvnav_alt_cor = vnav_vvi_trg - vnav_pth_fpm",
+        "\t\t\t\t\t\tB738DR_vnav_vvi_corr = vnav_alt_cor",
+        "\t\t\t\t\t\t",
+        "\t\t\t\t\t\tvnav_vvi_trg = math.max(vnav_vvi_trg, -5500)",
+        "\t\t\t\t\t\tvnav_vvi_trg = math.min (vnav_vvi_trg, 0)"
+      ],
+      "newLines": [
+        "\t\t\t\t\t\t-- FIX: INTENTIONAL FIX I34 - do not command an excessive clean-descent rejoin when speed is not high.",
+        "\t\t\t\t\t\tlocal speed_high = false",
+        "\t\t\t\t\t\tif simDR_airspeed_is_mach == 0 then",
+        "\t\t\t\t\t\t\tspeed_high = B738DR_mcp_speed_dial > 0 and AP_airspeed - B738DR_mcp_speed_dial > 5",
+        "\t\t\t\t\t\telse",
+        "\t\t\t\t\t\t\tspeed_high = B738DR_mcp_speed_dial > 0 and AP_airspeed_mach - B738DR_mcp_speed_dial > 0.015",
+        "\t\t\t\t\t\tend",
+        "\t\t\t\t\t\tif B738DR_flight_phase == 5 and B738DR_vnav_alt_err <= -400 and vnav_vvi_trg < vnav_pth_fpm and speed_high == false then",
+        "\t\t\t\t\t\t\tlocal rejoin_limit = math.max(-4500, vnav_pth_fpm - 1000)",
+        "\t\t\t\t\t\t\tif vnav_pth_fpm < rejoin_limit then",
+        "\t\t\t\t\t\t\t\trejoin_limit = vnav_pth_fpm",
+        "\t\t\t\t\t\t\tend",
+        "\t\t\t\t\t\t\tvnav_vvi_trg = math.max(vnav_vvi_trg, rejoin_limit)",
+        "\t\t\t\t\t\tend",
+        "\t\t\t\t\t\t",
+        "\t\t\t\t\t\tvnav_alt_cor = vnav_vvi_trg - vnav_pth_fpm",
+        "\t\t\t\t\t\tB738DR_vnav_vvi_corr = vnav_alt_cor",
+        "\t\t\t\t\t\t",
+        "\t\t\t\t\t\tvnav_vvi_trg = math.max(vnav_vvi_trg, -5500)",
+        "\t\t\t\t\t\tvnav_vvi_trg = math.min (vnav_vvi_trg, 0)"
+      ]
+    }
+  ]
+}

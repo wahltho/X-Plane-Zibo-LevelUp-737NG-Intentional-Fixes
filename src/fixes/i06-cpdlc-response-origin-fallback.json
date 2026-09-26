@@ -1,0 +1,503 @@
+{
+  "format": "exact-text-replacements-v1",
+  "condition": "cpdlc-surface-present",
+  "replacements": [
+    {
+      "name": "I06 effective CPDLC response helper",
+      "oldLines": [
+        "function dl_cpdlc_message(in_msg)",
+        "\tmax_page_buf = 1"
+      ],
+      "newLines": [
+        "-- FIX: infer WILCO only for existing PDC/CLD messages whose response code is absent.",
+        "function cpdlc_effective_rsp(in_msg)",
+        "\tlocal rsp = atc_msg_rsp[in_msg]",
+        "\tif rsp == nil then rsp = 0 end",
+        "\tif rsp ~= 0 then return rsp end",
+        "\tlocal txt = atc_msg_txt[in_msg]",
+        "\tif txt == nil or txt == \"\" then return rsp end",
+        "\tlocal up = string.upper(txt)",
+        "\tlocal is_pdc = string.find(up, \" PDC \", 1, true) ~= nil or string.find(up, \" PREDEP CLEARANCE\", 1, true) ~= nil",
+        "\tlocal is_cld = string.sub(up, 1, 4) == \"CLD \"",
+        "\tif is_pdc or is_cld then return 2 end",
+        "\treturn rsp",
+        "end",
+        "",
+        "function dl_cpdlc_message(in_msg)",
+        "\tmax_page_buf = 1"
+      ]
+    },
+    {
+      "name": "I06 B738_fmc1_4L_CMDhandler response block 1",
+      "oldLines": [
+        "\t\t\tif B738DR_cmu == 1 and atc_uplink_pending_menu ~= 0 then",
+        "\t\t\t\t-- accept/roger/wilco",
+        "\t\t\t\tlocal answer_msg = \"\"",
+        "\t\t\t\tif atc_msg_rsp[atc_msg_log_cur] == 1 then",
+        "\t\t\t\t\tanswer_msg = \"AFFIRM\"",
+        "\t\t\t\telseif atc_msg_rsp[atc_msg_log_cur] == 2 then",
+        "\t\t\t\t\tanswer_msg = \"WILCO\"",
+        "\t\t\t\telseif atc_msg_rsp[atc_msg_log_cur] == 3 then",
+        "\t\t\t\t\tanswer_msg = \"ROGER\"",
+        "\t\t\t\telse",
+        "\t\t\t\t\tanswer_msg = \"ACCEPT\"",
+        "\t\t\t\tend",
+        "\t\t\t\t",
+        "\t\t\t\tatc_resp_state = 1",
+        "\t\t\t\tatc_resp_state_timer = 2"
+      ],
+      "newLines": [
+        "\t\t\tif B738DR_cmu == 1 and atc_uplink_pending_menu ~= 0 then",
+        "\t\t\t\t-- accept/roger/wilco",
+        "\t\t\t\tlocal answer_msg = \"\"",
+        "\t\t\t\tif cpdlc_effective_rsp(atc_msg_log_cur) == 1 then",
+        "\t\t\t\t\tanswer_msg = \"AFFIRM\"",
+        "\t\t\t\telseif cpdlc_effective_rsp(atc_msg_log_cur) == 2 then",
+        "\t\t\t\t\tanswer_msg = \"WILCO\"",
+        "\t\t\t\telseif cpdlc_effective_rsp(atc_msg_log_cur) == 3 then",
+        "\t\t\t\t\tanswer_msg = \"ROGER\"",
+        "\t\t\t\telse",
+        "\t\t\t\t\tanswer_msg = \"ACCEPT\"",
+        "\t\t\t\tend",
+        "\t\t\t\t",
+        "\t\t\t\tatc_resp_state = 1",
+        "\t\t\t\tatc_resp_state_timer = 2"
+      ]
+    },
+    {
+      "name": "I06 B738_fmc1_5R_CMDhandler response block 1",
+      "oldLines": [
+        "\t\t\tif atc_uplink_pending_menu ~= 0 then",
+        "\t\t\t\t-- accept/roger/wilco",
+        "\t\t\t\tlocal answer_msg = \"\"",
+        "\t\t\t\tif atc_msg_rsp[atc_msg_log_cur] == 1 then",
+        "\t\t\t\t\tanswer_msg = \"AFFIRM\"",
+        "\t\t\t\telseif atc_msg_rsp[atc_msg_log_cur] == 2 then",
+        "\t\t\t\t\tanswer_msg = \"WILCO\"",
+        "\t\t\t\telseif atc_msg_rsp[atc_msg_log_cur] == 3 then",
+        "\t\t\t\t\tanswer_msg = \"ROGER\"",
+        "\t\t\t\telse",
+        "\t\t\t\t\tanswer_msg = \"ACCEPT\"",
+        "\t\t\t\tend",
+        "\t\t\t\t",
+        "\t\t\t\tatc_resp_state = 1",
+        "\t\t\t\tatc_resp_state_timer = 2"
+      ],
+      "newLines": [
+        "\t\t\tif atc_uplink_pending_menu ~= 0 then",
+        "\t\t\t\t-- accept/roger/wilco",
+        "\t\t\t\tlocal answer_msg = \"\"",
+        "\t\t\t\tif cpdlc_effective_rsp(atc_msg_log_cur) == 1 then",
+        "\t\t\t\t\tanswer_msg = \"AFFIRM\"",
+        "\t\t\t\telseif cpdlc_effective_rsp(atc_msg_log_cur) == 2 then",
+        "\t\t\t\t\tanswer_msg = \"WILCO\"",
+        "\t\t\t\telseif cpdlc_effective_rsp(atc_msg_log_cur) == 3 then",
+        "\t\t\t\t\tanswer_msg = \"ROGER\"",
+        "\t\t\t\telse",
+        "\t\t\t\t\tanswer_msg = \"ACCEPT\"",
+        "\t\t\t\tend",
+        "\t\t\t\t",
+        "\t\t\t\tatc_resp_state = 1",
+        "\t\t\t\tatc_resp_state_timer = 2"
+      ]
+    },
+    {
+      "name": "I06 B738_fmc1_5R_CMDhandler response block 2",
+      "oldLines": [
+        "\t\telseif page_atc_verify_rsp == 1 then",
+        "\t\t\tif atc_uplink_pending_menu ~= 0 then",
+        "\t\t\t\tlocal answer_msg = \"\"",
+        "\t\t\t\tif atc_msg_rsp[atc_msg_log_cur] == 1 then",
+        "\t\t\t\t\tanswer_msg = \"NEGATIVE\"",
+        "\t\t\t\telseif atc_msg_rsp[atc_msg_log_cur] == 2 then",
+        "\t\t\t\t\tanswer_msg = \"UNABLE\"",
+        "\t\t\t\telse",
+        "\t\t\t\t\tanswer_msg = \"UNABLE\""
+      ],
+      "newLines": [
+        "\t\telseif page_atc_verify_rsp == 1 then",
+        "\t\t\tif atc_uplink_pending_menu ~= 0 then",
+        "\t\t\t\tlocal answer_msg = \"\"",
+        "\t\t\t\tif cpdlc_effective_rsp(atc_msg_log_cur) == 1 then",
+        "\t\t\t\t\tanswer_msg = \"NEGATIVE\"",
+        "\t\t\t\telseif cpdlc_effective_rsp(atc_msg_log_cur) == 2 then",
+        "\t\t\t\t\tanswer_msg = \"UNABLE\"",
+        "\t\t\t\telse",
+        "\t\t\t\t\tanswer_msg = \"UNABLE\""
+      ]
+    },
+    {
+      "name": "I06 B738_fmc1_5R_CMDhandler response block 3",
+      "oldLines": [
+        "\t\t\t\telseif uplink_reject_due == 2 then",
+        "\t\t\t\t\tanswer_msg = answer_msg \" DUE TO WEATHER\"",
+        "\t\t\t\telseif uplink_reject_due == 3 then"
+      ],
+      "newLines": [
+        "\t\t\t\telseif uplink_reject_due == 2 then",
+        "\t\t\t\t\tanswer_msg = answer_msg .. \" DUE TO WEATHER\"",
+        "\t\t\t\telseif uplink_reject_due == 3 then"
+      ]
+    },
+    {
+      "name": "I06 B738_fmc1_5R_CMDhandler response block 4",
+      "oldLines": [
+        "\t\t\t\t\t\tif atc_msg_rsp[atc_msg_log_cur] == 1 then"
+      ],
+      "newLines": [
+        "\t\t\t\t\t\tif cpdlc_effective_rsp(atc_msg_log_cur) == 1 then"
+      ]
+    },
+    {
+      "name": "I06 B738_fmc1_5R_CMDhandler response block 5",
+      "oldLines": [
+        "\t\t\t\t\t\telseif atc_msg_rsp[atc_msg_log_cur] == 2 then"
+      ],
+      "newLines": [
+        "\t\t\t\t\t\telseif cpdlc_effective_rsp(atc_msg_log_cur) == 2 then"
+      ]
+    },
+    {
+      "name": "I06 B738_fmc1_5R_CMDhandler response block 6",
+      "oldLines": [
+        "\t\t\t\t\t\telseif atc_msg_rsp[atc_msg_log_cur] == 3 then"
+      ],
+      "newLines": [
+        "\t\t\t\t\t\telseif cpdlc_effective_rsp(atc_msg_log_cur) == 3 then"
+      ]
+    },
+    {
+      "name": "I06 B738_fmc1_5R_CMDhandler response block 7",
+      "oldLines": [
+        "\t\telseif page_dl_cpdlc_unable == 1 then",
+        "\t\t\tif atc_uplink_pending_menu ~= 0 then",
+        "\t\t\t\tlocal answer_msg = \"\"",
+        "\t\t\t\tif atc_msg_rsp[atc_msg_log_cur] == 1 then",
+        "\t\t\t\t\tanswer_msg = \"NEGATIVE\"",
+        "\t\t\t\telseif atc_msg_rsp[atc_msg_log_cur] == 2 then",
+        "\t\t\t\t\tanswer_msg = \"UNABLE\"",
+        "\t\t\t\telse",
+        "\t\t\t\t\tanswer_msg = \"NEGATIVE\""
+      ],
+      "newLines": [
+        "\t\telseif page_dl_cpdlc_unable == 1 then",
+        "\t\t\tif atc_uplink_pending_menu ~= 0 then",
+        "\t\t\t\tlocal answer_msg = \"\"",
+        "\t\t\t\tif cpdlc_effective_rsp(atc_msg_log_cur) == 1 then",
+        "\t\t\t\t\tanswer_msg = \"NEGATIVE\"",
+        "\t\t\t\telseif cpdlc_effective_rsp(atc_msg_log_cur) == 2 then",
+        "\t\t\t\t\tanswer_msg = \"UNABLE\"",
+        "\t\t\t\telse",
+        "\t\t\t\t\tanswer_msg = \"NEGATIVE\""
+      ]
+    },
+    {
+      "name": "I06 send_cpdlc response block 1",
+      "oldLines": [
+        "function send_cpdlc(in_msg)",
+        "\tif in_msg ~= 0 and in_msg <= atc_msg_n then",
+        "\t\tatc_send_buf = \"/data2/\" .. atc_msg_cpdlc_dn[in_msg] .. \"/\"",
+        "\t\tif atc_msg_cpdlc_up[in_msg] == 0 then",
+        "\t\t\tatc_send_buf = atc_send_buf .. \"/\"",
+        "\t\telse",
+        "\t\t\tatc_send_buf = atc_send_buf .. atc_msg_cpdlc_up[in_msg] .. \"/\"",
+        "\t\tend",
+        "\t\tif atc_msg_rsp[in_msg] == 0 then",
+        "\t\t\tif atc_msg_txt[in_msg] == \"LOGOFF\" then",
+        "\t\t\t\tatc_send_buf = atc_send_buf .. \"NE/\"\t\t--or N/",
+        "\t\t\telse",
+        "\t\t\t\tatc_send_buf = atc_send_buf .. \"N/\"\t\t--or N/",
+        "\t\t\tend",
+        "\t\telse",
+        "\t\t\tatc_send_buf = atc_send_buf .. \"Y/\"\t\t--or WU/",
+        "\t\tend"
+      ],
+      "newLines": [
+        "function send_cpdlc(in_msg)",
+        "\tif in_msg ~= 0 and in_msg <= atc_msg_n then",
+        "\t\tatc_send_buf = \"/data2/\" .. atc_msg_cpdlc_dn[in_msg] .. \"/\"",
+        "\t\tif atc_msg_cpdlc_up[in_msg] == 0 then",
+        "\t\t\tatc_send_buf = atc_send_buf .. \"/\"",
+        "\t\telse",
+        "\t\t\tatc_send_buf = atc_send_buf .. atc_msg_cpdlc_up[in_msg] .. \"/\"",
+        "\t\tend",
+        "\t\tif cpdlc_effective_rsp(in_msg) == 0 then",
+        "\t\t\tif atc_msg_txt[in_msg] == \"LOGOFF\" then",
+        "\t\t\t\tatc_send_buf = atc_send_buf .. \"NE/\"\t\t--or N/",
+        "\t\t\telse",
+        "\t\t\t\tatc_send_buf = atc_send_buf .. \"N/\"\t\t--or N/",
+        "\t\t\tend",
+        "\t\telse",
+        "\t\t\tatc_send_buf = atc_send_buf .. \"Y/\"\t\t--or WU/",
+        "\t\tend"
+      ]
+    },
+    {
+      "name": "I06 send_cpdlc_to response block 1",
+      "oldLines": [
+        "function send_cpdlc_to(in_msg, in_to)",
+        "\tif in_msg ~= 0 and in_msg <= atc_msg_n then",
+        "\t\tatc_send_buf = \"/data2/\" .. atc_msg_cpdlc_dn[in_msg] .. \"/\"",
+        "\t\tif atc_msg_cpdlc_up[in_msg] == 0 then",
+        "\t\t\tatc_send_buf = atc_send_buf .. \"/\"",
+        "\t\telse",
+        "\t\t\tatc_send_buf = atc_send_buf .. atc_msg_cpdlc_up[in_msg] .. \"/\"",
+        "\t\tend",
+        "\t\tif atc_msg_rsp[in_msg] == 0 then",
+        "\t\t\tif atc_msg_txt[in_msg] == \"LOGOFF\" then",
+        "\t\t\t\tatc_send_buf = atc_send_buf .. \"NE/\"\t\t--or N/",
+        "\t\t\telse",
+        "\t\t\t\tatc_send_buf = atc_send_buf .. \"N/\"\t\t--or N/",
+        "\t\t\tend",
+        "\t\telse",
+        "\t\t\tatc_send_buf = atc_send_buf .. \"Y/\"\t\t--or WU/",
+        "\t\tend"
+      ],
+      "newLines": [
+        "function send_cpdlc_to(in_msg, in_to)",
+        "\tif in_msg ~= 0 and in_msg <= atc_msg_n then",
+        "\t\tatc_send_buf = \"/data2/\" .. atc_msg_cpdlc_dn[in_msg] .. \"/\"",
+        "\t\tif atc_msg_cpdlc_up[in_msg] == 0 then",
+        "\t\t\tatc_send_buf = atc_send_buf .. \"/\"",
+        "\t\telse",
+        "\t\t\tatc_send_buf = atc_send_buf .. atc_msg_cpdlc_up[in_msg] .. \"/\"",
+        "\t\tend",
+        "\t\tif cpdlc_effective_rsp(in_msg) == 0 then",
+        "\t\t\tif atc_msg_txt[in_msg] == \"LOGOFF\" then",
+        "\t\t\t\tatc_send_buf = atc_send_buf .. \"NE/\"\t\t--or N/",
+        "\t\t\telse",
+        "\t\t\t\tatc_send_buf = atc_send_buf .. \"N/\"\t\t--or N/",
+        "\t\t\tend",
+        "\t\telse",
+        "\t\t\tatc_send_buf = atc_send_buf .. \"Y/\"\t\t--or WU/",
+        "\t\tend"
+      ]
+    },
+    {
+      "name": "I06 fmc_atc_uplink response block 1",
+      "oldLines": [
+        "\t\t\tif atc_msg_rsp[in_msg] ~= 0 then"
+      ],
+      "newLines": [
+        "\t\t\tif cpdlc_effective_rsp(in_msg) ~= 0 then"
+      ]
+    },
+    {
+      "name": "I06 fmc_atc_uplink response block 2",
+      "oldLines": [
+        "\t\t",
+        "\t\tif atc_msg_rcv_snd[in_msg] == 0 and atc_msg_rsp[in_msg] ~= 0 and (atc_msg_status[in_msg] == 2 or atc_msg_status[in_msg] == 3) then",
+        "\t\t\tmsg_pending = 1"
+      ],
+      "newLines": [
+        "\t\t",
+        "\t\tif atc_msg_rcv_snd[in_msg] == 0 and cpdlc_effective_rsp(in_msg) ~= 0 and (atc_msg_status[in_msg] == 2 or atc_msg_status[in_msg] == 3) then",
+        "\t\t\tmsg_pending = 1"
+      ]
+    },
+    {
+      "name": "I06 fmc_atc_verify_rsp response block 1",
+      "oldLines": [
+        "\tif atc_msg_rcv_snd[in_msg] == 0 and atc_msg_rsp[in_msg] ~= 0 and (atc_msg_status[in_msg] == 0 or atc_msg_status[in_msg] == 2 or atc_msg_status[in_msg] == 3) then"
+      ],
+      "newLines": [
+        "\tif atc_msg_rcv_snd[in_msg] == 0 and cpdlc_effective_rsp(in_msg) ~= 0 and (atc_msg_status[in_msg] == 0 or atc_msg_status[in_msg] == 2 or atc_msg_status[in_msg] == 3) then"
+      ]
+    },
+    {
+      "name": "I06 dl_cpdlc_message response block 1",
+      "oldLines": [
+        "\tif atc_msg_status[in_msg] == 0 then",
+        "\t\tif atc_msg_rsp[in_msg] ~= 0 then",
+        "\t\t\tatc_msg_status[in_msg] = 2\t--\"OPEN\""
+      ],
+      "newLines": [
+        "\tif atc_msg_status[in_msg] == 0 then",
+        "\t\tif cpdlc_effective_rsp(in_msg) ~= 0 then",
+        "\t\t\tatc_msg_status[in_msg] = 2\t--\"OPEN\""
+      ]
+    },
+    {
+      "name": "I06 dl_cpdlc_message response block 2",
+      "oldLines": [
+        "\t\tif atc_msg_rcv_snd[in_msg] == 0 and atc_msg_rsp[in_msg] ~= 0 then"
+      ],
+      "newLines": [
+        "\t\tif atc_msg_rcv_snd[in_msg] == 0 and cpdlc_effective_rsp(in_msg) ~= 0 then"
+      ]
+    },
+    {
+      "name": "I06 dl_cpdlc_message response block 3",
+      "oldLines": [
+        "\telse",
+        "\t\tif atc_msg_rcv_snd[in_msg] == 0 and atc_msg_rsp[in_msg] ~= 0 and (atc_msg_status[in_msg] == 2 or atc_msg_status[in_msg] == 3) then",
+        "\t\t\tmsg_pending = 1"
+      ],
+      "newLines": [
+        "\telse",
+        "\t\tif atc_msg_rcv_snd[in_msg] == 0 and cpdlc_effective_rsp(in_msg) ~= 0 and (atc_msg_status[in_msg] == 2 or atc_msg_status[in_msg] == 3) then",
+        "\t\t\tmsg_pending = 1"
+      ]
+    },
+    {
+      "name": "I06 dl_cpdlc_message response block 4",
+      "oldLines": [
+        "\t\t\t\t\t-- Accept sending",
+        "\t\t\t\t\tif atc_msg_rsp[in_msg] == 1 then",
+        "\t\t\t\t\t\tline4_l = \"ACCEPT\"",
+        "\t\t\t\t\telseif atc_msg_rsp[in_msg] == 2 then",
+        "\t\t\t\t\t\tline4_l = \"WILCO\""
+      ],
+      "newLines": [
+        "\t\t\t\t\t-- Accept sending",
+        "\t\t\t\t\tif cpdlc_effective_rsp(in_msg) == 1 then",
+        "\t\t\t\t\t\tline4_l = \"ACCEPT\"",
+        "\t\t\t\t\telseif cpdlc_effective_rsp(in_msg) == 2 then",
+        "\t\t\t\t\t\tline4_l = \"WILCO\""
+      ]
+    },
+    {
+      "name": "I06 dl_cpdlc_message response block 5",
+      "oldLines": [
+        "\t\t\t\t\t-- Standby sending",
+        "\t\t\t\t\tif atc_msg_rsp[in_msg] == 1 then",
+        "\t\t\t\t\t\tline4_l = \"=ACCEPT        NEGATIVE=\"",
+        "\t\t\t\t\telseif atc_msg_rsp[in_msg] == 2 then",
+        "\t\t\t\t\t\tline4_l = \"=WILCO           UNABLE=\"",
+        "\t\t\t\t\telse",
+        "\t\t\t\t\t\tline4_l = \"=ROGER           UNABLE=\""
+      ],
+      "newLines": [
+        "\t\t\t\t\t-- Standby sending",
+        "\t\t\t\t\tif cpdlc_effective_rsp(in_msg) == 1 then",
+        "\t\t\t\t\t\tline4_l = \"=ACCEPT        NEGATIVE=\"",
+        "\t\t\t\t\telseif cpdlc_effective_rsp(in_msg) == 2 then",
+        "\t\t\t\t\t\tline4_l = \"=WILCO           UNABLE=\"",
+        "\t\t\t\t\telse",
+        "\t\t\t\t\t\tline4_l = \"=ROGER           UNABLE=\""
+      ]
+    },
+    {
+      "name": "I06 dl_cpdlc_message response block 6",
+      "oldLines": [
+        "\t\t\t\t\t-- Reject sending",
+        "\t\t\t\t\tif atc_msg_rsp[in_msg] == 1 then",
+        "\t\t\t\t\t\tline4_l = \"NEGATIVE\"",
+        "\t\t\t\t\telseif atc_msg_rsp[in_msg] == 2 then",
+        "\t\t\t\t\t\tline4_l = \"UNABLE\""
+      ],
+      "newLines": [
+        "\t\t\t\t\t-- Reject sending",
+        "\t\t\t\t\tif cpdlc_effective_rsp(in_msg) == 1 then",
+        "\t\t\t\t\t\tline4_l = \"NEGATIVE\"",
+        "\t\t\t\t\telseif cpdlc_effective_rsp(in_msg) == 2 then",
+        "\t\t\t\t\t\tline4_l = \"UNABLE\""
+      ]
+    },
+    {
+      "name": "I06 dl_cpdlc_message response block 7",
+      "oldLines": [
+        "\t\t\t\t\t-- Not sending",
+        "\t\t\t\t\tif atc_msg_rsp[in_msg] == 1 then",
+        "\t\t\t\t\t\tline4_l = \"=ACCEPT        NEGATIVE=\"",
+        "\t\t\t\t\telseif atc_msg_rsp[in_msg] == 2 then",
+        "\t\t\t\t\t\tline4_l = \"=WILCO           UNABLE=\"",
+        "\t\t\t\t\telse",
+        "\t\t\t\t\t\tline4_l = \"=ROGER           UNABLE=\""
+      ],
+      "newLines": [
+        "\t\t\t\t\t-- Not sending",
+        "\t\t\t\t\tif cpdlc_effective_rsp(in_msg) == 1 then",
+        "\t\t\t\t\t\tline4_l = \"=ACCEPT        NEGATIVE=\"",
+        "\t\t\t\t\telseif cpdlc_effective_rsp(in_msg) == 2 then",
+        "\t\t\t\t\t\tline4_l = \"=WILCO           UNABLE=\"",
+        "\t\t\t\t\telse",
+        "\t\t\t\t\t\tline4_l = \"=ROGER           UNABLE=\""
+      ]
+    },
+    {
+      "name": "I06 dl_cpdlc_message response block 8",
+      "oldLines": [
+        "\t\tif msg_pending ~= 0 then",
+        "\t\t\tif atc_msg_rsp[in_msg] == 1 then",
+        "\t\t\t\tline5_l = \"<NEGATIVE        ACCEPT>\"",
+        "\t\t\telseif atc_msg_rsp[in_msg] == 2 then",
+        "\t\t\t\tline5_l = \"<UNABLE           WILCO>\""
+      ],
+      "newLines": [
+        "\t\tif msg_pending ~= 0 then",
+        "\t\t\tif cpdlc_effective_rsp(in_msg) == 1 then",
+        "\t\t\t\tline5_l = \"<NEGATIVE        ACCEPT>\"",
+        "\t\t\telseif cpdlc_effective_rsp(in_msg) == 2 then",
+        "\t\t\t\tline5_l = \"<UNABLE           WILCO>\""
+      ]
+    },
+    {
+      "name": "I06 direct-send current-origin fallback",
+      "oldLines": [
+        "\tif atc_logon ~= \"********\" or in_to ~= \"****\" then",
+        "\t\tif HBDR_ready ~= 0 then",
+        "\t\t\tif HBDR_comm_ready ~= 0 then",
+        "\t\t\t\tif in_to == \"****\" then",
+        "\t\t\t\t\tHBDR_poll_send_message_to = atc_logon",
+        "\t\t\t\telse",
+        "\t\t\t\t\tHBDR_poll_send_message_to = in_to",
+        "\t\t\t\tend",
+        "\t\t\t\tHBDR_poll_send_message_type = \"cpdlc\"",
+        "\t\t\t\tHBDR_poll_send_message_packet = atc_send_buf",
+        "\t\t\tend",
+        "\t\tend",
+        "\tend"
+      ],
+      "newLines": [
+        "\t-- FIX: INTENTIONAL FIX I06 - answer the current uplink origin if the logon target was cleared.",
+        "\tlocal send_to = in_to",
+        "\tif send_to == nil or send_to == \"\" or send_to == \"****\" or send_to == \"********\" or send_to == \"--------\" then",
+        "\t\tsend_to = atc_logon",
+        "\tend",
+        "\tif (send_to == nil or send_to == \"\" or send_to == \"****\" or send_to == \"********\" or send_to == \"--------\") and atc_msg_log_cur ~= 0 and atc_msg_log_cur <= atc_msg_n then",
+        "\t\tlocal current_origin = atc_msg_from[atc_msg_log_cur]",
+        "\t\tif current_origin ~= nil and current_origin ~= \"\" and current_origin ~= \"****\" and current_origin ~= \"********\" and current_origin ~= \"--------\" then",
+        "\t\t\tsend_to = current_origin",
+        "\t\tend",
+        "\tend",
+        "\tif send_to ~= nil and send_to ~= \"\" and send_to ~= \"****\" and send_to ~= \"********\" and send_to ~= \"--------\" then",
+        "\t\tif HBDR_ready ~= 0 then",
+        "\t\t\tif HBDR_comm_ready ~= 0 then",
+        "\t\t\t\tHBDR_poll_send_message_to = send_to",
+        "\t\t\t\tHBDR_poll_send_message_type = \"cpdlc\"",
+        "\t\t\t\tHBDR_poll_send_message_packet = atc_send_buf",
+        "\t\t\tend",
+        "\t\tend",
+        "\tend"
+      ]
+    },
+    {
+      "name": "I06 nil-safe secondary PREDEP route context",
+      "oldLines": [
+        "\t\telseif page_dl_atc_req_dep == 1 then",
+        "\t\t\t",
+        "\t\t\tif atc_resp_state == 0 then",
+        "\t\t\t\t",
+        "\t\t\t\tlocal telex_to = atc_logon"
+      ],
+      "newLines": [
+        "\t\telseif page_dl_atc_req_dep == 1 then",
+        "\t\t\t",
+        "\t\t\tif atc_resp_state == 0 then",
+        "\t\t\t\t-- FIX: INTENTIONAL FIX I06 - PREDEP concatenation must have a route ICAO context.",
+        "\t\t\t\tlocal use_ref_icao = \"****\"",
+        "\t\t\t\tlocal use_des_icao = \"****\"",
+        "\t\t\t\tif rte12_act == 0 then",
+        "\t\t\t\t\tuse_ref_icao = ref_icao or \"****\"",
+        "\t\t\t\t\tuse_des_icao = des_icao or \"****\"",
+        "\t\t\t\telseif rte12_act == 1 then",
+        "\t\t\t\t\tuse_ref_icao = ref_icao7 or \"****\"",
+        "\t\t\t\t\tuse_des_icao = des_icao7 or \"****\"",
+        "\t\t\t\tend",
+        "\t\t\t\t",
+        "\t\t\t\tlocal telex_to = atc_logon"
+      ]
+    }
+  ]
+}

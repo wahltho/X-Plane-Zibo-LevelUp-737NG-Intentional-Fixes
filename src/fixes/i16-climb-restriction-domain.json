@@ -1,0 +1,58 @@
+{
+  "format": "exact-text-replacements-v1",
+  "replacements": [
+    {
+      "name": "I16 climb-domain helper",
+      "oldLines": [
+        "function B738_restrict_data()"
+      ],
+      "newLines": [
+        "-- FIX: bound climb-restriction scans to climb/neutral route roles and fail closed",
+        "-- before arrival, approach or discontinuity rows. Active missed approach keeps its",
+        "-- own complete climb domain.",
+        "local function B738_climb_restriction_end_idx()",
+        "\tif B738DR_missed_app_act > 0 then return legs_num end",
+        "\tlocal end_idx = legs_num",
+        "\tif tc_idx ~= nil and tc_idx > 1 then end_idx = math.min(end_idx, tc_idx - 1) end",
+        "\tfor ii = math.max(offset or 1, 1), end_idx do",
+        "\t\tlocal leg = legs_data[ii]",
+        "\t\tif leg == nil then return ii - 1 end",
+        "\t\tlocal role = tonumber(leg[19]) or 0",
+        "\t\tif leg[1] == \"DISCONTINUITY\" or role == 2 or role == 3 or role == 4 or role == 7 or role == 8 or role == 9 then",
+        "\t\t\treturn ii - 1",
+        "\t\tend",
+        "\tend",
+        "\treturn end_idx",
+        "end",
+        "",
+        "function B738_restrict_data()"
+      ]
+    },
+    {
+      "name": "I16 speed restriction climb bound",
+      "oldLines": [
+        "\t\t\tif B738DR_flight_phase < 2 or B738DR_flight_phase > 7 then\t\t-- climb and go-around",
+        "\t\t\t\t",
+        "\t\t\t\ttd_idx_temp = math.max(last_sid_idx, tc_idx - 1)"
+      ],
+      "newLines": [
+        "\t\t\tif B738DR_flight_phase < 2 or B738DR_flight_phase > 7 then\t\t-- climb and go-around",
+        "\t\t\t\t",
+        "\t\t\t\ttd_idx_temp = B738_climb_restriction_end_idx()"
+      ]
+    },
+    {
+      "name": "I16 altitude restriction climb bound",
+      "oldLines": [
+        "\t\t\t\t\tif B738DR_missed_app_act > 0 then",
+        "\t\t\t\t\t\ttd_idx_temp = legs_num",
+        "\t\t\t\t\telse",
+        "\t\t\t\t\t\ttd_idx_temp = math.max(last_sid_idx, tc_idx - 1)",
+        "\t\t\t\t\tend"
+      ],
+      "newLines": [
+        "\t\t\t\t\ttd_idx_temp = B738_climb_restriction_end_idx()"
+      ]
+    }
+  ]
+}

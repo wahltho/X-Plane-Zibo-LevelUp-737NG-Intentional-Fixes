@@ -1,0 +1,45 @@
+{
+  "format": "intentional-fixes-source-plan-v1",
+  "name": "Zibo / LevelUp 737NG Intentional Fixes",
+  "fixCatalog": "FIX_CATALOG.md",
+  "scope": "fix-only",
+  "composition": "after-all-selected-functional-modules",
+  "standalone": {
+    "manifest": "standalone-manifest.json",
+    "installer": "z_Install.py",
+    "scope": "untouched-shared-original-4.05.35-lua-only"
+  },
+  "supportedBaselines": [
+    {
+      "id": "zibo-4.05.35-shared-by-zibo-and-levelup",
+      "sha256": "ff313b0e88c62845ad1c4a2b1f4bd599f57d8799e8d6707bfc10a3369fd63a8e",
+      "aircraft": ["Zibo", "LevelUp"]
+    }
+  ],
+  "families": [
+    { "ids": ["I01"], "mode": "payload", "path": "src/fixes/i01-gls-lp-record-resolution.json" },
+    { "ids": ["I02", "I03"], "mode": "shared-payload", "path": "src/fixes/i02-i03-course-and-intercept.json" },
+    { "ids": ["I04"], "mode": "payload", "path": "src/fixes/i04-hold-course-defaults.json" },
+    { "ids": ["I05"], "mode": "payload", "path": "src/fixes/i05-app-normalization-and-if-merge.json" },
+    { "ids": ["I06"], "mode": "conditional-payload", "condition": "cpdlc-surface-present", "path": "src/fixes/i06-cpdlc-response-origin-fallback.json" },
+    { "ids": ["I07"], "mode": "payload", "path": "src/fixes/i07-pause-at-td.json" },
+    { "ids": ["I08"], "mode": "payload", "path": "src/fixes/i08-app-ref-resolution.json" },
+    { "ids": ["I09"], "mode": "payload", "path": "src/fixes/i09-hold-identity-route-mutations.json" },
+    { "ids": ["I14"], "mode": "satisfied-by-functional-module", "condition": "cpdlc-1.2-selected", "note": "No additional Lua delta is required beyond the selected CPDLC 1.2 correction." },
+    { "ids": ["I16"], "mode": "payload", "path": "src/fixes/i16-climb-restriction-domain.json" },
+    { "ids": ["I24"], "mode": "payload", "path": "src/fixes/i24-n1-owner-and-oat-guard.json" },
+    { "ids": ["I27"], "mode": "payload", "path": "src/fixes/i27-manual-go-around-evidence.json" },
+    { "ids": ["I29"], "mode": "baseline-satisfied", "note": "The shared clean .35 Lua already rejects and clears non-matching dashed procedure placeholders." },
+    { "ids": ["I30"], "mode": "payload", "path": "src/fixes/i30-alt-intervention-constraint-release.json" },
+    { "ids": ["I33"], "mode": "conditional-payload", "condition": "levelup-wb-surface-present", "path": "src/fixes/i33-levelup-wb-zfw-gate.json" },
+    { "ids": ["I34"], "mode": "payload", "path": "src/fixes/i34-clean-descent-rejoin-vvi.json" },
+    { "ids": ["I35"], "mode": "payload", "path": "src/fixes/i35-flight-phase-descent-guards.json" }
+  ],
+  "summary": {
+    "fixFamilies": 18,
+    "familiesWithLuaDelta": 16,
+    "payloadDocuments": 15,
+    "functionalModuleSatisfiedFamilies": 1,
+    "baselineSatisfiedFamilies": 1
+  }
+}

@@ -1,0 +1,120 @@
+{
+  "format": "exact-text-replacements-v1",
+  "replacements": [
+    {
+      "name": "I33 bind LevelUp geometry inputs after the W&B module",
+      "oldLines": [
+        "simDR_payload_stations\t\t= find_dataref(\"sim/flightmodel/weight/m_stations\") -- LevelUp W&B binding anchor",
+        "-- BEGIN LEVELUP_NG_WB FMS_EMPTY_WEIGHT",
+        "simDR_levelup_ng_acf_m_empty\t= find_dataref(\"sim/aircraft/weight/acf_m_empty\")",
+        "-- FIX: load the same pure ACF predicate in the FMS XLua state.",
+        "dofile(\"../B738.tablet/B738.tablet_levelup_ng_wb_data.lua\")",
+        "local levelup_ng_wb_aircraft = B738_levelup_ng_wb_data.new_aircraft_reader()",
+        "simDR_levelup_ng_wb_acf_path = find_dataref(\"sim/aircraft/view/acf_relative_path\")",
+        "-- END LEVELUP_NG_WB FMS_EMPTY_WEIGHT"
+      ],
+      "newLines": [
+        "simDR_payload_stations\t\t= find_dataref(\"sim/flightmodel/weight/m_stations\") -- LevelUp W&B binding anchor",
+        "-- BEGIN LEVELUP_NG_WB FMS_EMPTY_WEIGHT",
+        "simDR_levelup_ng_acf_m_empty\t= find_dataref(\"sim/aircraft/weight/acf_m_empty\")",
+        "-- FIX: load the same pure ACF predicate in the FMS XLua state.",
+        "dofile(\"../B738.tablet/B738.tablet_levelup_ng_wb_data.lua\")",
+        "local levelup_ng_wb_aircraft = B738_levelup_ng_wb_data.new_aircraft_reader()",
+        "simDR_levelup_ng_wb_acf_path = find_dataref(\"sim/aircraft/view/acf_relative_path\")",
+        "-- FIX: INTENTIONAL FIX I33 - validate the complete live station contract before publishing automatic FMC ZFW.",
+        "simDR_levelup_ng_acf_m_max = find_dataref(\"sim/aircraft/weight/acf_m_max\")",
+        "simDR_levelup_ng_acf_cg_ref = find_dataref(\"sim/aircraft/weight/acf_cgZ_original\")",
+        "simDR_levelup_ng_station_z = find_dataref(\"sim/aircraft/weight/acf_stations_ref_z\")",
+        "simDR_levelup_ng_station_max = find_dataref(\"sim/aircraft/weight/acf_m_station_max\")",
+        "simDR_levelup_ng_fuel_max = find_dataref(\"sim/aircraft/weight/acf_m_fuel_tot\")",
+        "simDR_levelup_ng_tank_empty = find_dataref(\"sim/aircraft/overflow/acf_tank_Z\")",
+        "simDR_levelup_ng_tank_full = find_dataref(\"sim/aircraft/overflow/acf_tank_Z_full\")",
+        "simDR_levelup_ng_tank_rat = find_dataref(\"sim/aircraft/overflow/acf_tank_rat\")",
+        "local levelup_ng_wb_fms_zfw_valid = true",
+        "-- END LEVELUP_NG_WB FMS_EMPTY_WEIGHT"
+      ]
+    },
+    {
+      "name": "I33 reject invalid LevelUp station geometry and mass",
+      "oldLines": [
+        "\t-- BEGIN LEVELUP_NG_WB FMS_ZFW_OWNER",
+        "\tif levelup_ng_wb_aircraft.read(B738DR_b737_variant, file_path2, simDR_levelup_ng_wb_acf_path) then",
+        "\t\t-- FIX: LevelUp ACF empty mass already includes the pilots.  The nine",
+        "\t\t-- physical stations are the payload owner, including during slow loading",
+        "\t\t-- and external-payload operation; do not subtract Zibo's inherited 524 kg.",
+        "\t\tlocal station_payload_weight = 0",
+        "\t\tfor station_index = 0, 8 do",
+        "\t\t\tstation_payload_weight = station_payload_weight + math.max(simDR_payload_stations[station_index] or 0, 0)",
+        "\t\tend",
+        "\t\tzfw_real = simDR_levelup_ng_acf_m_empty + station_payload_weight",
+        "\telse",
+        "\t\tzfw_real = B738DR_oew_kg + simDR_payload_weight - full_crew_weight",
+        "\tend",
+        "\t-- END LEVELUP_NG_WB FMS_ZFW_OWNER"
+      ],
+      "newLines": [
+        "\t-- BEGIN LEVELUP_NG_WB FMS_ZFW_OWNER",
+        "\tlocal levelup_policy = B738_levelup_ng_wb_data[B738DR_b737_variant]",
+        "\tlocal levelup_loaded_path = (simDR_levelup_ng_wb_acf_path or \"\"):gsub(\"%z.*\", \"\"):gsub(\"\\\\\", \"/\")",
+        "\tlocal levelup_candidate = levelup_policy ~= nil and levelup_loaded_path:match(\"([^/]+)$\") == levelup_policy.acf_name",
+        "\tlocal levelup_metadata = levelup_ng_wb_aircraft.read(B738DR_b737_variant, file_path2, simDR_levelup_ng_wb_acf_path)",
+        "\tlevelup_ng_wb_fms_zfw_valid = true",
+        "\tif levelup_metadata then",
+        "\t\tlocal snapshot_ok, levelup_geometry = pcall(B738_levelup_ng_wb_data.snapshot, levelup_policy, levelup_metadata, {",
+        "\t\t\tempty_kg = simDR_levelup_ng_acf_m_empty, max_kg = simDR_levelup_ng_acf_m_max,",
+        "\t\t\treference_ft = simDR_levelup_ng_acf_cg_ref, fuel_kg = simDR_levelup_ng_fuel_max,",
+        "\t\t\tstation_z = simDR_levelup_ng_station_z, station_max = simDR_levelup_ng_station_max,",
+        "\t\t\ttank_empty = simDR_levelup_ng_tank_empty, tank_full = simDR_levelup_ng_tank_full,",
+        "\t\t\ttank_rat = simDR_levelup_ng_tank_rat,",
+        "\t\t})",
+        "\t\tlocal station_payload_weight = 0",
+        "\t\tlevelup_ng_wb_fms_zfw_valid = snapshot_ok and levelup_geometry ~= nil",
+        "\t\tif levelup_ng_wb_fms_zfw_valid then",
+        "\t\t\tfor station_index = 0, 8 do",
+        "\t\t\t\tlocal station_mass = simDR_payload_stations[station_index]",
+        "\t\t\t\tlocal station_limit = levelup_geometry.stations[station_index + 1].max_kg",
+        "\t\t\t\tif not B738_levelup_ng_wb_data.finite(station_mass) or station_mass < 0 or station_mass > station_limit then",
+        "\t\t\t\t\tlevelup_ng_wb_fms_zfw_valid = false",
+        "\t\t\t\t\tbreak",
+        "\t\t\t\tend",
+        "\t\t\t\tstation_payload_weight = station_payload_weight + station_mass",
+        "\t\t\tend",
+        "\t\tend",
+        "\t\tif levelup_ng_wb_fms_zfw_valid then",
+        "\t\t\t-- LevelUp ACF empty mass already includes the pilots; all nine physical stations own payload.",
+        "\t\t\tzfw_real = simDR_levelup_ng_acf_m_empty + station_payload_weight",
+        "\t\telse",
+        "\t\t\tzfw_real = 0",
+        "\t\tend",
+        "\telseif levelup_candidate then",
+        "\t\t-- FIX: INTENTIONAL FIX I33 - a known LevelUp with an invalid contract must never fall back to legacy crew arithmetic.",
+        "\t\tlevelup_ng_wb_fms_zfw_valid = false",
+        "\t\tzfw_real = 0",
+        "\telse",
+        "\t\tzfw_real = B738DR_oew_kg + simDR_payload_weight - full_crew_weight",
+        "\tend",
+        "\t-- END LEVELUP_NG_WB FMS_ZFW_OWNER"
+      ]
+    },
+    {
+      "name": "I33 display unavailable automatic ZFW fail closed",
+      "oldLines": [
+        "\tv = (zfw_real / 1000) * KGS_LBS\t\t-- 1000 lbs",
+        "\tzfw_calc_lbs = string.format(\"%5.1f\", v)",
+        "\tzfw_calc_kgs = string.format(\"%5.1f\", v / KGS_LBS)"
+      ],
+      "newLines": [
+        "\t-- FIX: INTENTIONAL FIX I33 - do not turn an invalid station contract into a plausible automatic ZFW.",
+        "\tif levelup_ng_wb_fms_zfw_valid then",
+        "\t\tv = (zfw_real / 1000) * KGS_LBS\t\t-- 1000 lbs",
+        "\t\tzfw_calc_lbs = string.format(\"%5.1f\", v)",
+        "\t\tzfw_calc_kgs = string.format(\"%5.1f\", v / KGS_LBS)",
+        "\telse",
+        "\t\tzfw_calc_lbs = \"***.*\"",
+        "\t\tzfw_calc_kgs = \"***.*\"",
+        "\tend"
+      ]
+    }
+  ],
+  "condition": "levelup-wb-surface-present"
+}

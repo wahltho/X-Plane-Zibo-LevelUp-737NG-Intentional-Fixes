@@ -1,0 +1,118 @@
+{
+  "format": "exact-text-replacements-v1",
+  "replacements": [
+    {
+      "name": "I35 preserve phase when T/D is unavailable",
+      "oldLines": [
+        "\t\t\t\tif td_idx == 0 then",
+        "\t\t\t\t\tif legs_num > 0 and (B738DR_flight_phase == 1 or B738DR_flight_phase == 3 or B738DR_flight_phase == 8) then",
+        "\t\t\t\t\t\tB738DR_fms_descent_now = 3",
+        "\t\t\t\t\t\tB738DR_flight_phase = 5",
+        "\t\t\t\t\t\ttakeoff_enable = 0",
+        "\t\t\t\t\t\tclimb_enable = 0",
+        "\t\t\t\t\telseif B738DR_flight_phase == 4 then",
+        "\t\t\t\t\t\talt_temp = math.abs(simDR_altitude_pilot - crz_alt_num)",
+        "\t\t\t\t\t\tif crz_alt_num > 0 and alt_temp < 100 then",
+        "\t\t\t\t\t\t\tB738DR_flight_phase = 2",
+        "\t\t\t\t\t\t\taltitude_last = elevation_ft\t--simDR_altitude_pilot",
+        "\t\t\t\t\t\t\tnd_vert_path_enable = false",
+        "\t\t\t\t\t\tend",
+        "\t\t\t\t\telse",
+        "\t\t\t\t\t\tif descent_active == 1 and B738DR_flight_phase < 5 then",
+        "\t\t\t\t\t\t\tB738DR_flight_phase = 5",
+        "\t\t\t\t\t\t\tB738DR_fms_descent_now = 3",
+        "\t\t\t\t\t\t\ttakeoff_enable = 0",
+        "\t\t\t\t\t\t\tclimb_enable = 0",
+        "\t\t\t\t\t\tend",
+        "\t\t\t\t\tend",
+        "\t\t\t\telse"
+      ],
+      "newLines": [
+        "\t\t\t\tif td_idx == 0 then",
+        "\t\t\t\t\t-- FIX: INTENTIONAL FIX I35 - a missing T/D is unknown path state, not proof of descent.",
+        "\t\t\t\t\tif B738DR_flight_phase == 4 then",
+        "\t\t\t\t\t\talt_temp = math.abs(simDR_altitude_pilot - crz_alt_num)",
+        "\t\t\t\t\t\tif crz_alt_num > 0 and alt_temp < 100 then",
+        "\t\t\t\t\t\t\tB738DR_flight_phase = 2",
+        "\t\t\t\t\t\t\taltitude_last = elevation_ft\t--simDR_altitude_pilot",
+        "\t\t\t\t\t\t\tnd_vert_path_enable = false",
+        "\t\t\t\t\t\tend",
+        "\t\t\t\t\telseif B738DR_flight_phase ~= 0 and B738DR_flight_phase < 5 and B738DR_flight_phase ~= 8 then",
+        "\t\t\t\t\t\tlocal commanded_descent = descent_active == 1",
+        "\t\t\t\t\t\tif (B738DR_altitude_mode == 1 or B738DR_altitude_mode == 2) and B738DR_mcp_alt_dial < simDR_altitude_pilot - 300 then",
+        "\t\t\t\t\t\t\tcommanded_descent = true",
+        "\t\t\t\t\t\tend",
+        "\t\t\t\t\t\tif commanded_descent == true then",
+        "\t\t\t\t\t\t\tB738DR_flight_phase = 5",
+        "\t\t\t\t\t\t\tB738DR_fms_descent_now = 3",
+        "\t\t\t\t\t\t\ttakeoff_enable = 0",
+        "\t\t\t\t\t\t\tclimb_enable = 0",
+        "\t\t\t\t\t\tend",
+        "\t\t\t\t\tend",
+        "\t\t\t\telse"
+      ]
+    },
+    {
+      "name": "I35 do not classify go-around as cruise from T/D presence",
+      "oldLines": [
+        "\t\t\t\t\t-- B738DR_fms_test3 = 1",
+        "\t\t\t\t\t",
+        "\t\t\t\t\tif B738DR_flight_phase == 1 or B738DR_flight_phase == 8 then"
+      ],
+      "newLines": [
+        "\t\t\t\t\t-- B738DR_fms_test3 = 1",
+        "\t\t\t\t\t",
+        "\t\t\t\t\t-- FIX: INTENTIONAL FIX I35 - T/D presence does not revoke go-around ownership.",
+        "\t\t\t\t\tif B738DR_flight_phase == 1 then"
+      ]
+    },
+    {
+      "name": "I35 guard pre-T/D descent-active transition during initialization",
+      "oldLines": [
+        "\t\t\t\t\t\t\tif descent_active == 1 and B738DR_flight_phase < 5 then",
+        "\t\t\t\t\t\t\t\t-- flight phase DESCENT"
+      ],
+      "newLines": [
+        "\t\t\t\t\t\t\t-- FIX: INTENTIONAL FIX I35 - phase zero is not a valid descent owner.",
+        "\t\t\t\t\t\t\tif B738DR_flight_phase ~= 0 and descent_active == 1 and B738DR_flight_phase < 5 then",
+        "\t\t\t\t\t\t\t\t-- flight phase DESCENT"
+      ]
+    },
+    {
+      "name": "I35 require a lower MCP target for V/S or LVL CHG descent",
+      "oldLines": [
+        "\t\t\t\t\t\t\t\tif B738DR_altitude_mode == 1 or B738DR_altitude_mode == 2 then",
+        "\t\t\t\t\t\t\t\t\t--V/S or LVL CHG"
+      ],
+      "newLines": [
+        "\t\t\t\t\t\t\t\t-- FIX: INTENTIONAL FIX I35 - an upward V/S or LVL CHG target is not descent evidence.",
+        "\t\t\t\t\t\t\t\tif (B738DR_altitude_mode == 1 or B738DR_altitude_mode == 2) and B738DR_mcp_alt_dial < simDR_altitude_pilot - 300 then",
+        "\t\t\t\t\t\t\t\t\t--V/S or LVL CHG"
+      ]
+    },
+    {
+      "name": "I35 preserve initialization and go-around after T/D crossing",
+      "oldLines": [
+        "\t\t\t\t\t\telseif B738DR_flight_phase < 2 or B738DR_flight_phase == 3 or B738DR_flight_phase == 8 then",
+        "\t\t\t\t\t\t\t-- B738DR_fms_test3 = 8"
+      ],
+      "newLines": [
+        "\t\t\t\t\t\t-- FIX: INTENTIONAL FIX I35 - an elapsed T/D does not own phase zero or go-around.",
+        "\t\t\t\t\t\telseif B738DR_flight_phase ~= 0 and (B738DR_flight_phase < 2 or B738DR_flight_phase == 3) then",
+        "\t\t\t\t\t\t\t-- B738DR_fms_test3 = 8"
+      ]
+    },
+    {
+      "name": "I35 guard final descent-active transition during initialization",
+      "oldLines": [
+        "\t\t\t\t\telseif descent_active == 1 and B738DR_flight_phase < 5 then",
+        "\t\t\t\t\t\t-- B738DR_fms_test3 = 9"
+      ],
+      "newLines": [
+        "\t\t\t\t\t-- FIX: INTENTIONAL FIX I35 - phase zero is not a valid descent owner.",
+        "\t\t\t\t\telseif B738DR_flight_phase ~= 0 and descent_active == 1 and B738DR_flight_phase < 5 then",
+        "\t\t\t\t\t\t-- B738DR_fms_test3 = 9"
+      ]
+    }
+  ]
+}

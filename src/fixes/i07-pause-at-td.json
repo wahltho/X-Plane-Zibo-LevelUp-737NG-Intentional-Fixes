@@ -1,0 +1,52 @@
+{
+  "format": "exact-text-replacements-v1",
+  "replacements": [
+    {
+      "name": "I07 PAUSE AT T/D context and rearm lifecycle",
+      "oldLines": [
+        "function B738_pause_td()",
+        "\tif B738DR_pause_td == 1 then",
+        "\t\tif td_idx ~= 0 and B738DR_vnav_td_dist < 8 and B738DR_vnav_td_dist > 2 and pause_td_disable == 0 then",
+        "\t\t\tpause_td_disable = 1",
+        "\t\t\tif simDR_pause == 0 then",
+        "\t\t\t\tsimCMD_pause:once()",
+        "\t\t\tend",
+        "\t\tend",
+        "\t\tif td_idx ~= 0 and B738DR_vnav_td_dist > 10 then",
+        "\t\t\tpause_td_disable = 0",
+        "\t\tend",
+        "\t\t",
+        "\telse",
+        "\t\tpause_td_disable = 0",
+        "\tend",
+        "end"
+      ],
+      "newLines": [
+        "function B738_pause_td()",
+        "\t-- FIX: INTENTIONAL FIX I07 - PAUSE AT T/D requires an active cruise/T/D context.",
+        "\tif B738DR_pause_td == 1 then",
+        "\t\tlocal pause_td_context_ok = false",
+        "\t\tif td_idx ~= 0 and offset > 0 and offset <= td_idx and B738DR_flight_phase == 2 then",
+        "\t\t\tpause_td_context_ok = true",
+        "\t\tend",
+        "\t\tif pause_td_context_ok == true and B738DR_vnav_td_dist < 8 and B738DR_vnav_td_dist > 2 and pause_td_disable == 0 then",
+        "\t\t\tpause_td_disable = 1",
+        "\t\t\tif simDR_pause == 0 then",
+        "\t\t\t\tsimCMD_pause:once()",
+        "\t\t\tend",
+        "\t\tend",
+        "\t\tif pause_td_context_ok == true and B738DR_vnav_td_dist > 10 then",
+        "\t\t\tpause_td_disable = 0",
+        "\t\tend",
+        "\t\tif pause_td_context_ok == false then",
+        "\t\t\tpause_td_disable = 0",
+        "\t\tend",
+        "\t\t",
+        "\telse",
+        "\t\tpause_td_disable = 0",
+        "\tend",
+        "end"
+      ]
+    }
+  ]
+}

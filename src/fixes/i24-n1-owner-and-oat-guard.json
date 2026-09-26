@@ -1,0 +1,138 @@
+{
+  "format": "exact-text-replacements-v1",
+  "replacements": [
+    {
+      "name": "I24 bind semantic AP vertical mode",
+      "oldLines": [
+        "B738DR_ap_on\t\t\t\t= create_dataref(\"laminar/autopilot/ap_on\", \"number\", ap_on_handl)",
+        "B738DR_cws_on\t\t\t\t= create_dataref(\"laminar/autopilot/cws_on\", \"number\", cws_on_handl)"
+      ],
+      "newLines": [
+        "B738DR_ap_on\t\t\t\t= create_dataref(\"laminar/autopilot/ap_on\", \"number\", ap_on_handl)",
+        "B738DR_cws_on\t\t\t\t= create_dataref(\"laminar/autopilot/cws_on\", \"number\", cws_on_handl)",
+        "-- FIX: INTENTIONAL FIX I24 - the original binary already publishes the normalized PFD vertical mode.",
+        "B738DR_pfd_alt_mode\t\t= find_dataref(\"laminar/B738/autopilot/pfd_alt_mode\")"
+      ]
+    },
+    {
+      "name": "I24 initialize manual N1 retirement owner 1",
+      "oldLines": [
+        "fmc_goaround_mode = 0",
+        "fms_N1_mode = 0",
+        "fms_N1_to_mode_sel = 0",
+        "fms_N1_clb_mode_sel = 0",
+        "in_flight_mode = 0",
+        ""
+      ],
+      "newLines": [
+        "fmc_goaround_mode = 0",
+        "fms_N1_mode = 0",
+        "fms_N1_to_mode_sel = 0",
+        "fms_N1_clb_mode_sel = 0",
+        "-- FIX: INTENTIONAL FIX I24 - manual N1 retires on an engaged-AP semantic vertical-mode change.",
+        "n1_ap_mode_last = 0",
+        "n1_ap_mode_valid = 0",
+        "in_flight_mode = 0",
+        ""
+      ]
+    },
+    {
+      "name": "I24 initialize manual N1 retirement owner 2",
+      "oldLines": [
+        "fmc_goaround_mode = 0",
+        "fms_N1_mode = 0",
+        "fms_N1_to_mode_sel = 0",
+        "fms_N1_clb_mode_sel = 0",
+        "in_flight_mode = 0",
+        "B738DR_lift_timer = 0"
+      ],
+      "newLines": [
+        "fmc_goaround_mode = 0",
+        "fms_N1_mode = 0",
+        "fms_N1_to_mode_sel = 0",
+        "fms_N1_clb_mode_sel = 0",
+        "-- FIX: INTENTIONAL FIX I24 - manual N1 retires on an engaged-AP semantic vertical-mode change.",
+        "n1_ap_mode_last = 0",
+        "n1_ap_mode_valid = 0",
+        "in_flight_mode = 0",
+        "B738DR_lift_timer = 0"
+      ]
+    },
+    {
+      "name": "I24 replace phase and VNAV proxy retirement",
+      "oldLines": [
+        "\tif vnav_status_old ~= B738DR_autopilot_vnav_status and B738DR_autopilot_vnav_status == 1 then",
+        "\t\tauto_act = \"<ACT>\"",
+        "\t\tga_act = \"     \"",
+        "\t\tcon_act = \"     \"",
+        "\t\tclb_act = \"     \"",
+        "\t\tcrz_act = \"     \"",
+        "\tend",
+        "\tvnav_status_old = B738DR_autopilot_vnav_status",
+        "\t",
+        "\tif auto_act == \"     \" then",
+        "\t\tif B738DR_altitude_mode == 9 or B738DR_altitude_mode == 10 or B738DR_altitude_mode == 11 then",
+        "\t\t\tga_act = \"<ACT>\"",
+        "\t\t\tcon_act = \"     \"",
+        "\t\t\tclb_act = \"     \"",
+        "\t\t\tcrz_act = \"     \"",
+        "\t\telseif flight_phase_old2 ~= B738DR_flight_phase and B738DR_flight_phase ~= 0 then",
+        "\t\t\tga_act = \"     \"",
+        "\t\t\tcon_act = \"     \"",
+        "\t\t\tclb_act = \"     \"",
+        "\t\t\tcrz_act = \"     \"",
+        "\t\t\tif B738DR_flight_phase == 1 or B738DR_flight_phase == 3 then",
+        "\t\t\t\tclb_act = \"<ACT>\"",
+        "\t\t\telseif B738DR_flight_phase == 2 or (B738DR_flight_phase > 3 and B738DR_flight_phase < 7) then",
+        "\t\t\t\tcrz_act = \"<ACT>\"",
+        "\t\t\telse",
+        "\t\t\t\tga_act = \"<ACT>\"",
+        "\t\t\tend",
+        "\t\tend",
+        "\tend"
+      ],
+      "newLines": [
+        "\t-- FIX: INTENTIONAL FIX I24 - phase and VNAV-arm changes are not manual N1 retirement events.",
+        "\tlocal n1_master_side = math.max(0, math.min(1, math.floor((B738DR_glare[0] or 0) + 0.5)))",
+        "\tlocal n1_ap_mode = math.floor((B738DR_pfd_alt_mode[n1_master_side] or 0) + 0.5)",
+        "\tif B738DR_load_save ~= 0 or B738DR_ap_on == 0 then",
+        "\t\tn1_ap_mode_valid = 0",
+        "\telseif n1_ap_mode ~= 0 then",
+        "\t\tif n1_ap_mode_valid ~= 0 and n1_ap_mode ~= n1_ap_mode_last and auto_act == \"     \" then",
+        "\t\t\tauto_act = \"<ACT>\"",
+        "\t\t\tga_act = \"     \"",
+        "\t\t\tcon_act = \"     \"",
+        "\t\t\tclb_act = \"     \"",
+        "\t\t\tcrz_act = \"     \"",
+        "\t\tend",
+        "\t\tn1_ap_mode_last = n1_ap_mode",
+        "\t\tn1_ap_mode_valid = 1",
+        "\tend",
+        "\tvnav_status_old = B738DR_autopilot_vnav_status"
+      ]
+    },
+    {
+      "name": "I24 publish unavailable N1 when non-aspirated ground OAT is missing",
+      "oldLines": [
+        "\t\tif auto_act == \"<ACT>\" then",
+        "\t\t\tif fmc_auto_thrust == 0 or fmc_auto_thrust2 == 0 then\t-- FMC thrust not able",
+        "\t\t\t\tB738DR_fms_N1_mode = 13",
+        "\t\t\t\tB738DR_fms_N1_thrust[0] = 1.00\t-- full thrust",
+        "\t\t\t\tB738DR_fms_N1_thrust[1] = 1.00\t-- full thrust"
+      ],
+      "newLines": [
+        "\t\t-- FIX: INTENTIONAL FIX I24 - no FMC N1 reference exists without entered OAT on a non-aspirated aircraft on ground.",
+        "\t\tlocal n1_ground_oat_missing = B738DR_aspirated_probe == 0 and ground_air == 0 and B738DR_fmc_oat_temp == 99",
+        "\t\tif n1_ground_oat_missing then",
+        "\t\t\tB738DR_fms_N1_mode = 13",
+        "\t\t\tB738DR_fms_N1_thrust[0] = 1.00",
+        "\t\t\tB738DR_fms_N1_thrust[1] = 1.00",
+        "\t\telseif auto_act == \"<ACT>\" then",
+        "\t\t\tif fmc_auto_thrust == 0 or fmc_auto_thrust2 == 0 then\t-- FMC thrust not able",
+        "\t\t\t\tB738DR_fms_N1_mode = 13",
+        "\t\t\t\tB738DR_fms_N1_thrust[0] = 1.00\t-- full thrust",
+        "\t\t\t\tB738DR_fms_N1_thrust[1] = 1.00\t-- full thrust"
+      ]
+    }
+  ]
+}
