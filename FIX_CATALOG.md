@@ -1,255 +1,158 @@
-# Intentional Fixes catalog
+# What's included
 
-This package corrects existing Zibo 4.05.35 Lua behavior. It adds no FMC page,
-user option, background service or new operational feature, and it never
-changes `zibomod.xpl`. The current Zibo and LevelUp aircraft use the same clean
-.35 Lua baseline.
+These fixes address existing FMS behavior in the original Zibo 4.05.35 Lua,
+also used by LevelUp. They add no FMC pages, options or background services
+and do not change `zibomod.xpl`.
 
-The Maintenance Toolkit selection covers 18 reviewed fix families. Fourteen
-families are unconditional and are also available in the clean-.35 standalone
-installer. I06 and I33 are conditional corrections for selected functional
-modules. I14 is already satisfied by CPDLC 1.2, and I29 is already satisfied
-by the clean .35 baseline, so neither receives an artificial no-op payload.
+The I-numbers are reference IDs used in the patch files and technical notes.
 
-## At a glance
+## Available with either installer
 
-| ID | Area | Corrected behavior | Clean standalone |
-|---|---|---|:---:|
-| I01 | GLS/LP navdata | Robust record parsing and best-match selection; LP remains lateral-only | Yes |
-| I02 | Procedure courses | TRUE/MAG and tenth-degree values are parsed and converted exactly once | Yes |
-| I03 | CI/VI intercepts | Stale or same-fix preview legs cannot become the intercept lookahead owner | Yes |
-| I04 | Holds | Correct course reference, altitude semantics and missing time/distance defaults | Yes |
-| I05 | Approaches | Canonical APP display, correct Ref-ICAO row and IF-preserving merge | Yes |
-| I06 | CPDLC replies | Missing response codes and lost origin/route context fail over safely | CPDLC only |
-| I07 | PAUSE AT T/D | Pause is armed only for a valid active cruise/T/D context and rearms correctly | Yes |
-| I08 | APP REF | Exact runway/ILS/LDA reference resolution with coherent stock outputs | Yes |
-| I09 | Holds/route edits | Hold identity survives EXEC, Direct, activation and offset mutations | Yes |
-| I14 | CPDLC lifecycle | Corrected CPDLC 1.2 state-machine behavior is recognized, not duplicated | CPDLC 1.2 |
-| I16 | VNAV climb | Climb restrictions cannot leak into arrival, approach or discontinuity domains | Yes |
-| I24 | N1 | Manual/AUTO ownership retires on the correct event; missing OAT fails unavailable | Yes |
-| I27 | Go-around phase | Manual go-around requires observed landing-flap retraction evidence | Yes |
-| I29 | SimBrief import | Invalid dashed procedure placeholders are already rejected and cleared | Already safe |
-| I30 | ALT INTV | The next conflicting committed altitude constraint is released correctly | Yes |
-| I33 | LevelUp W&B | Invalid live station geometry cannot publish a plausible automatic ZFW | W&B only |
-| I34 | VNAV descent | Clean-descent path rejoin demand is bounded when speed is not high | Yes |
-| I35 | Flight phase | Missing/crossed T/D and non-descending modes cannot falsely force descent | Yes |
+These 14 fixes are included with both Toolkit installation and the
+clean-.35 standalone installer.
 
-## Detailed descriptions
+### I01 — GLS, LPV and LP approach data
 
-### I01 — GLS/LP record resolution
+Navigation records can encode approach type, course and glideslope in different
+ways. The fix reads these variations and selects the matching runway and
+course record. It also prevents a lateral-only LP approach from showing
+vertical guidance as though it were LPV.
 
-**Problem:** Earth-nav Type 14 records can use different service, course and
-glideslope encodings. A weak match can select the wrong runway/course record,
-and an LP service can be treated as though it supplied LPV-style vertical
-guidance.
+### I02 — True and magnetic procedure courses
 
-**Correction:** Parse LP, LPV and GLS variants tolerantly, retain the approach
-identifier, select the best runway/course match, and keep vertical deviation
-off-scale for lateral-only LP service.
+Some procedure courses use a `T` suffix for true north; others are stored in
+tenths of a degree. Incorrect scaling or repeated magnetic-variation
+corrections can make the FMC, ND and flown leg disagree. The fix reads the
+units and north reference consistently and converts the course once where
+needed.
 
-**Delivery:** Unconditional; included in MTK and clean standalone.
+### I03 — Course and heading intercepts
 
-### I02 — TRUE/MAG course ownership
+During route edits, deleted or duplicate legs can remain in the temporary
+route data. CI/VI intercept calculations could use one of these instead of
+the intended next leg. The fix skips those entries when choosing the intercept
+target and handles the first-leg boundary safely.
 
-**Problem:** CIFP course fields may carry a `T` suffix or use tenth-degree
-units. Scaling or applying magnetic variation more than once can make the FMC,
-ND and flown leg disagree.
+### I04 — Hold courses, altitude and leg length
 
-**Correction:** Parse the published representation once, preserve the true
-reference where needed, convert once at the local leg position, and publish a
-consistent magnetic course to downstream stock consumers.
+An entered magnetic hold course could receive an extra magnetic-variation
+correction. Holds could also show the wrong true/magnetic reference,
+misinterpret an exact altitude restriction, or become zero miles long when
+navdata omitted both time and distance. The fix corrects these cases and uses
+the existing default length when the published length is missing.
 
-**Delivery:** Unconditional; shares one owner payload with I03.
+### I05 — Approach names and initial fixes
 
-### I03 — CI/VI intercept lookahead
+Approach names with Y/Z suffixes can display inconsistently. Reference-airport
+lookup could also read the wrong approach entry. Both are corrected without
+changing the selected procedure. When approach legs are joined or cleaned up,
+a published initial fix (IF) is kept as an IF rather than changed to a
+track-to-fix (TF) leg.
 
-**Problem:** During route editing, stale, deleted or same-fix duplicate preview
-rows can be selected as the next leg for CI/VI intercept geometry.
+### I07 — PAUSE AT T/D
 
-**Correction:** Skip non-owning preview rows before decoding the intercept
-target, including a safe boundary check before the first leg.
+The existing PAUSE AT T/D option could remain armed or trigger without a
+usable top-of-descent point. The fix checks the active cruise route and T/D
+before pausing and resets the pause state so it can work again when appropriate.
 
-**Delivery:** Unconditional; shares one owner payload with I02.
+### I08 — APP REF data
 
-### I04 — Hold course and default semantics
+An ambiguous runway or ILS/LDA lookup could select the wrong record or leave
+APP REF values drawn from different records. The fix uses the matching runway
+and approach record for the existing APP REF values.
 
-**Problem:** Hold entries can be double-converted for magnetic variation,
-display the wrong TRUE/MAG reference, interpret an exact altitude incorrectly,
-or create a zero-mile hold when CIFP supplies neither time nor distance.
+### I09 — Holds after route changes
 
-**Correction:** Store entered magnetic courses directly, display published
-true courses where appropriate, recognize dual-zero "at" altitude semantics,
-and use the bounded stock hold default only when the source value is actually
-missing.
+EXEC, route activation, Direct and offset changes could turn a hold leg into
+an ordinary route leg or lose its identity as a manual or procedure hold.
+The fix preserves that identity through those changes and prevents offset
+updates from overwriting the hold.
 
-**Delivery:** Unconditional; included in MTK and clean standalone.
+### I16 — Climb restrictions
 
-### I05 — Approach identity and IF-preserving merge
+The FMS could scan beyond the climb portion of a route and pick up speed or
+altitude restrictions from an arrival or approach. The fix stops the climb
+scan at those boundaries and at a discontinuity. Restrictions for an active
+missed approach are handled separately.
 
-**Problem:** Y/Z approach suffix variants can display inconsistently, Ref-ICAO
-parsing can use the wrong APP row, and procedure merge/cleanup can degrade a
-published IF leg to TF at a common-final or procedure-intercept join.
+### I24 — Manual N1 and missing OAT
 
-**Correction:** Canonicalize the displayed approach identifier without changing
-the selected procedure, bind Ref-ICAO parsing to the selected row, and preserve
-IF semantics through both route variants and merge paths.
+Manual N1 could be cleared by a flight-phase change or by arming VNAV, even
+without an engaged-autopilot vertical-mode change. The fix uses the actual
+vertical-mode change for that decision. It also leaves the FMC N1 reference
+unavailable on the ground when a non-aspirated aircraft requires an entered
+OAT and none has been entered. The existing N1 bug parking position is retained.
 
-**Delivery:** Unconditional; included in MTK and clean standalone.
+### I27 — Manual go-around detection
 
-### I06 — CPDLC effective response and origin fallback
+Flap position, thrust and AP state alone could make the FMS infer a go-around
+without a go-around sequence. The fix requires an observed retraction from
+landing flap during the same arrival and resets that record between arrivals.
 
-**Problem:** Some existing PDC/CLD uplinks lack an explicit response code, and
-their logon origin or secondary PREDEP route context may disappear before a
-reply is sent or rendered.
+### I30 — ALT INTV and altitude restrictions
 
-**Correction:** Infer WILCO only for recognizable existing PDC/CLD messages,
-use that effective response consistently, answer the current uplink origin if
-the logon target was cleared, and keep PREDEP route context nil-safe.
+With a lower MCP altitude selected, ALT INTV could miss the intended
+restriction because of its altitude threshold or affect the wrong route data.
+The fix releases the next conflicting altitude restriction on the active route
+and protects pending MOD edits. The existing DES NOW behavior is retained.
 
-**Delivery:** Conditional MTK correction after CPDLC; excluded from standalone.
+### I34 — Rejoining the descent path
 
-### I07 — PAUSE AT T/D lifecycle
+Below the descent path, with a commanded descent, the aircraft clean and
+airspeed at or below target, the FMS could demand an excessive descent rate
+to rejoin the path. The fix limits that demand under those conditions.
+Other descent modes and high-speed cases keep their existing behavior.
 
-**Problem:** The option can remain armed or trigger without a valid active
-cruise route and usable T/D context.
+### I35 — Incorrect descent phase changes
 
-**Correction:** Bind arming, triggering and rearming to the current active
-cruise/T/D lifecycle while retaining the existing user option and behavior.
+A missing or passed T/D could be taken as sufficient reason to enter descent,
+including during initialization or a go-around. V/S or LVL CHG could also
+count as descent while targeting a higher altitude. The fix checks these cases
+before changing flight phase and requires a lower selected altitude for
+V/S or LVL CHG descent.
 
-**Delivery:** Unconditional; included in MTK and clean standalone.
+## Applied by the Toolkit when the relevant module is selected
 
-### I08 — Exact APP REF resolution
+### I06 — CPDLC replies
 
-**Problem:** Ambiguous runway or ILS/LDA lookup can combine reference values
-from neighboring records or leave incoherent stock APP REF outputs.
+Some PDC/CLD clearance messages arrive without a response code. The fix
+recognizes these messages and makes WILCO available consistently. If the logon
+target has been cleared, it uses the current uplink's origin for the reply.
+It also handles missing route information in PREDEP messages.
 
-**Correction:** Resolve the exact applicable runway/approach record and update
-the existing stock APP REF values as one coherent result. No new external API
-or FMC page is added.
+Requires the CPDLC module. The standalone installer does not include this fix.
 
-**Delivery:** Unconditional; included in MTK and clean standalone.
+### I33 — LevelUp automatic ZFW
 
-### I09 — Hold identity through route mutation
+With the LevelUp W&B module, missing or invalid payload-station data could
+produce a plausible but incorrect automatic ZFW using the old crew-weight
+calculation. The fix checks the aircraft and station data first. If the data
+is invalid for a recognized LevelUp aircraft, automatic ZFW is shown as
+unavailable instead of using that fallback.
 
-**Problem:** EXEC, route activation, Direct and offset synchronization can
-temporarily rewrite HA/HF/HM hold rows as ordinary DF/TF geometry, losing the
-manual or procedure hold identity.
+Requires LevelUp W&B. The standalone installer does not include this fix.
 
-**Correction:** Recognize hold context from the surrounding stock route rows,
-rebuild hold ownership after mutations, arm manual-hold interception without
-rewriting the hold, and prevent offset synchronization from splicing over it.
+## Reviewed items that need no additional patch
 
-**Delivery:** Unconditional; included in MTK and clean standalone.
+### I14 — CPDLC message handling
 
-### I14 — CPDLC state-machine corrections
+The reviewed reply, retry and completion fixes are already included in
+CPDLC 1.2. Intentional Fixes does not install them a second time.
 
-**Problem:** An incomplete CPDLC transaction/lifecycle owner can leave message
-state inconsistent across reply, retry or completion paths.
+### I29 — SimBrief procedure placeholders
 
-**Correction:** The supported CPDLC 1.2 module already contains the reviewed
-corrected state-machine behavior. Intentional Fixes records that closure and
-does not apply a duplicate or competing Lua block.
+The original .35 Lua already checks imported SID, STAR and approach names
+against the available procedures and clears non-matches, including dashed
+placeholders. No additional change is included for this item.
 
-**Delivery:** Satisfied when CPDLC 1.2 is selected; no standalone payload.
+## Verification and support
 
-### I16 — Climb-restriction domain boundary
+The automated tests check installation and Lua syntax. They are not flight
+tests; see [DRY_TEST_RESULTS.md](DRY_TEST_RESULTS.md) for the tested combinations.
 
-**Problem:** A climb speed or altitude restriction scan can continue into
-arrival, approach or discontinuity rows and publish a constraint from the
-wrong route domain.
+This is an unofficial patch, not supported by Zibo, LevelUp or Laminar
+Research. For help or to report a problem, use the
+[wahltho Discord server](https://discord.gg/ySS88PMuyC).
 
-**Correction:** Bound the scan to climb and neutral departure roles, stop
-fail-closed at arrival/approach/discontinuity boundaries, and preserve the
-separate active missed-approach climb domain.
-
-**Delivery:** Unconditional; included in MTK and clean standalone.
-
-### I24 — N1 mode retirement and OAT availability
-
-**Problem:** Manual N1 can retire on flight-phase or VNAV-arm proxies instead
-of a real engaged-AP vertical-mode change. On the ground, a non-aspirated
-aircraft can also publish a plausible N1 reference without entered OAT.
-
-**Correction:** Use the existing normalized AP vertical-mode publication as
-the retirement owner, and publish N1 unavailable when required ground OAT is
-missing. The aircraft model's existing bug-park position is retained.
-
-**Delivery:** Unconditional; included in MTK and clean standalone.
-
-### I27 — Manual go-around evidence
-
-**Problem:** A static combination of flap, thrust and AP state can be mistaken
-for a manual go-around and change FMC phase outside a real go-around sequence.
-
-**Correction:** Require observed same-arrival landing-flap retraction as the
-transition evidence, with lifecycle state that cannot leak between arrivals.
-
-**Delivery:** Unconditional; included in MTK and clean standalone.
-
-### I29 — Dashed SimBrief procedure placeholders
-
-**Problem:** SimBrief may supply dashed or otherwise invalid SID, STAR or APP
-placeholder names.
-
-**Correction:** The shared clean .35 Lua already validates every imported
-procedure name against its list and clears each non-match before rebuilding the
-route. Adding a no-op patch would reduce safety rather than improve it.
-
-**Delivery:** Baseline-satisfied; no payload in MTK or standalone.
-
-### I30 — Lower-MCP ALT INTV constraint release
-
-**Problem:** Lowering the MCP and pressing ALT INTV can use deadbands or broad
-deletion loops, miss the intended constraint, or alter MOD-owned data while
-trying to release the active route.
-
-**Correction:** Find and release exactly the next conflicting committed
-altitude constraint in the valid climb/descent domain, mirror only an unchanged
-stock route copy, and preserve the existing DES NOW transition semantics.
-
-**Delivery:** Unconditional; included in MTK and clean standalone.
-
-### I33 — LevelUp W&B automatic ZFW gate
-
-**Problem:** Missing, invalid or incompatible live station geometry can fall
-back to legacy crew arithmetic and publish a plausible but incorrect automatic
-ZFW.
-
-**Correction:** Validate the complete current LevelUp aircraft/station contract
-before using physical station mass. A known LevelUp aircraft with an invalid
-contract fails unavailable instead of falling back silently.
-
-**Delivery:** Conditional MTK correction after LevelUp W&B; excluded from standalone.
-
-### I34 — Clean-descent rejoin demand
-
-**Problem:** During a clean descent below path, the stock rejoin producer can
-command excessive downward VVI even when airspeed is at or below target.
-
-**Correction:** Bound the existing VVI producer only in the proven clean,
-below-path, commanded-descent and non-high-speed case. High-speed energy
-management and other descent modes retain their existing authority.
-
-**Delivery:** Unconditional; included in MTK and clean standalone.
-
-### I35 — Flight-phase descent guards
-
-**Problem:** A missing or crossed T/D, phase-zero initialization, go-around, or
-an upward V/S/LVL CHG target can be misread as evidence that descent owns the
-flight phase.
-
-**Correction:** Treat missing T/D as unknown rather than descent, preserve
-initialization and go-around ownership, and require a genuinely lower selected
-target before V/S or LVL CHG counts as commanded descent.
-
-**Delivery:** Unconditional; included in MTK and clean standalone.
-
-## Package boundaries
-
-- Clean standalone: 14 corrective families in 13 payload documents.
-- MTK with no functional CPDLC/W&B module: the same 14 corrective families.
-- MTK with CPDLC 1.2: adds conditional I06 and recognizes I14 as already satisfied.
-- MTK with LevelUp W&B: adds conditional I33.
-- I29 remains documented baseline behavior in every combination.
-- Seven later Lua-owner candidates and eleven binary-owned families are outside
-  this first release; they are not silently included or advertised as fixed.
+Only the items described above are covered by this release. Other proposed
+Lua fixes and fixes that would require binary changes are not included.

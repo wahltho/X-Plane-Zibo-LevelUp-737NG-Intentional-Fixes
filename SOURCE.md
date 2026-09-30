@@ -1,6 +1,6 @@
 # Source and compatibility record
 
-This independent package applies bounded exact-text corrections to one file:
+This package applies text patches to:
 
 `plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua`
 
@@ -14,36 +14,60 @@ The standalone installer accepts only the untouched original Zibo 4.05.35 Lua:
 | Input | SHA-256 |
 |---|---|
 | Original Zibo 4.05.35 `B738.a_fms.lua` | `ff313b0e88c62845ad1c4a2b1f4bd599f57d8799e8d6707bfc10a3369fd63a8e` |
-| Current LevelUp repository copy | `ff313b0e88c62845ad1c4a2b1f4bd599f57d8799e8d6707bfc10a3369fd63a8e` |
+| LevelUp repository copy checked on 2026-09-26 | `ff313b0e88c62845ad1c4a2b1f4bd599f57d8799e8d6707bfc10a3369fd63a8e` |
 | Clean-only standalone result | `49a6ab1f077bca893123f476873ec5e7c9af1d18e31570996a697403ae2c3f70` |
 
-The two input rows were verified byte-identical on 2026-09-26. The LevelUp
-product version is not a second Lua baseline for this release.
+The two input files were byte-identical when checked. The LevelUp product
+version is not a separate Lua baseline for this release.
 
-## Patch derivation
+## How the patches were prepared
 
-Each payload contains only the exact original context required to identify its
-owner and the corresponding corrected block. The fixes were reconciled from
-the reviewed last-active Lua behavior and the integrated owner-chain findings,
-then reduced to fix-only Lua changes that remain valid with the unchanged
-original binary. `FIX_CATALOG.md` describes every included invariant;
-`PATCH_MATRIX.md` records the source-closure classification.
+Each patch contains the original text needed to locate the change and the
+replacement text. The changes were adapted from the reviewed last-active Lua
+and related investigations, keeping only fixes that can work with the
+unchanged original binary.
 
-I06 targets the completed CPDLC 1.2 surface and I33 targets the completed
-LevelUp W&B 0.5.3 surface. I14 is already satisfied by CPDLC 1.2. I29 is
-already satisfied by clean .35 and therefore has no no-op payload. The
-standalone installer deliberately excludes every conditional family.
+[FIX_CATALOG.md](FIX_CATALOG.md) describes the problems and corrections.
+[PATCH_MATRIX.md](PATCH_MATRIX.md) records the technical status.
+`package-plan.json` defines application order and module requirements.
 
-## Validation boundary
+I02 and I03 share a patch file. The 14 unconditional fixes use 13 patch files.
+I06 applies after CPDLC 1.2; I33 applies after LevelUp W&B 0.5.3.
+I14 is already included in CPDLC 1.2, and I29 is already handled by the original
+.35 Lua. Neither needs an additional patch. The standalone installer includes
+only the unconditional fixes.
 
-The final source passes the composition, idempotence, line-ending and Lua
-syntax dry matrix recorded in `DRY_TEST_RESULTS.md`. These checks do not claim
-simulator-runtime validation. The package is unofficial and independent;
-support is not provided by Zibo, LevelUp or Laminar Research.
+The Toolkit applies selected functional modules before Intentional Fixes.
+Unknown or incompatible input is rejected rather than patched by guesswork.
 
-## Licensing boundary
+## MTK package
+
+The separate 0.1.1 MTK archive can be generated with:
+
+```text
+python3 tools/build_mtk_package.py --check --archive <output.zip>
+```
+
+It uses schema 5 and requires Toolkit 0.21.1 or newer. The Zibo module excludes
+I33. The LevelUp module applies I33 only when Weight & Balance is selected.
+Both modules apply I06 only when CPDLC is selected.
+
+This archive is separate from the standalone 0.1.0 installer and contains no
+complete aircraft Lua file.
+
+## Checks performed
+
+[DRY_TEST_RESULTS.md](DRY_TEST_RESULTS.md) records the patch-application,
+repeat-application, line-ending, restoration and Lua-syntax checks. These
+checks do not establish simulator behavior.
+
+This is an unofficial package. Zibo, LevelUp and Laminar Research do not
+provide support for it. Support is through the
+[wahltho Discord server](https://discord.gg/ySS88PMuyC).
+
+## License
 
 The MIT license applies to the original installer, authoring/release tools,
-declarative patch design, tests and documentation in this repository. It does
-not relicense any complete upstream aircraft file. Upstream product names are
-used only for compatibility identification.
+patch definitions, tests and documentation in this repository. It does not
+relicense upstream aircraft code. Product names identify compatible aircraft;
+they do not imply endorsement.

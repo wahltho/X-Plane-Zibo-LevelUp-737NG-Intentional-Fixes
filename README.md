@@ -1,67 +1,51 @@
 # Zibo / LevelUp 737NG Intentional Fixes
 
-> **Independent, unofficial community patch.** This project is not affiliated
-> with, endorsed by, or supported by Zibo, LevelUp or Laminar Research.
-> Support is provided only through the
-> [wahltho Discord server](https://discord.gg/ySS88PMuyC). Please do not request
-> support for this package through official Zibo, LevelUp or Laminar Research
-> support channels.
+This optional patch fixes several FMS issues in the original Zibo 4.05.35 Lua,
+also used by LevelUp. It covers procedure courses, holds, approach reference
+data, N1 mode changes, go-around detection and VNAV descent behavior. The full
+list is in the [fix catalog](FIX_CATALOG.md).
 
-Optional, fix-only Lua corrections for the original Zibo/LevelUp Lua FMS. Both
-aircraft currently use the same original Zibo 4.05.35 `B738.a_fms.lua`; that
-single Lua hash is the clean baseline. The package leaves the upstream
-`zibomod.xpl` unchanged and never distributes the complete aircraft Lua file.
+**This is an unofficial patch.** It is not affiliated with, endorsed by, or
+supported by Zibo, LevelUp or Laminar Research. For help, use the
+[wahltho Discord server](https://discord.gg/ySS88PMuyC), not the official
+aircraft support channels.
 
-The source closure contains 18 fix families. Sixteen families carry a Lua
-delta in 15 structural payload documents because I02 and I03 share one owner;
-I14 is already satisfied by a selected CPDLC 1.2 surface and I29 is already
-satisfied by the shared clean baseline. `package-plan.json` is the authoritative
-source order and condition map.
+## Installation
 
-The user-facing inventory and detailed behavior descriptions are in
-`FIX_CATALOG.md`; `PATCH_MATRIX.md` remains the compact engineering-status view.
+Use the **X-Plane 737NG Maintenance Toolkit** to install Intentional Fixes
+alongside other patches. Select it in the Zibo or LevelUp patch group. Toolkit
+0.21.1 or newer is required. The Toolkit applies the functional patches first,
+then Intentional Fixes. The CPDLC and LevelUp W&B fixes are applied only when
+those modules are selected.
 
-The package-local 18-case composition and Lua-syntax dry matrix is green; see
-`DRY_TEST_RESULTS.md`. Simulator behavior remains a separate validation gate
-and is not claimed by the dry evidence.
+The **standalone installer** is for an untouched original .35 Lua file only.
+It includes 14 fixes and rejects files changed by other Lua patches. See the
+[installation instructions](INSTALLATION.md). If you have already used the
+standalone installer, uninstall it before switching to Toolkit management.
 
-A strict standalone installer source is available as `z_Install.py`; see
-`INSTALLATION.md`. It accepts only the untouched shared original .35 Lua and
-installs the 13 unconditional payload documents representing 14 fix families.
-Aircraft with any other Lua patch must use the Maintenance Toolkit.
+The standalone download is version 0.1.0. The separate 0.1.1 MTK package is
+for Toolkit installation; it does not replace the standalone installer.
 
-The separate `0.1.1` MTK release asset is generated with
-`python3 tools/build_mtk_package.py --check --archive <output.zip>`. It is a
-schema-5 compatibility source for the optional Intentional Fixes selection in
-the Zibo and LevelUp catalog groups. Its Zibo module omits the LevelUp-only I33
-target; the LevelUp module applies I33 only when Weight & Balance is selected.
-Both apply I06 only when CPDLC is selected. The asset does not contain a full
-aircraft Lua file and does not replace the standalone `0.1.0` installer.
-Toolkit 0.21.1 or newer is required for these structural insertions.
+## What changes
 
-Product rules:
+The patch updates `B738.a_fms.lua` in your aircraft installation. It adds no
+FMC pages, settings or automatic services. `zibomod.xpl` stays unchanged, and
+the download contains no complete aircraft Lua file.
 
-- one user-visible `Intentional Fixes` selection, installed after all selected
-  functional modules;
-- fixes only: no new user-visible functions, pages, options, settings or
-  automatic services; private helpers are allowed only when a bounded fix
-  requires them;
-- never distribute or replace the complete upstream `B738.a_fms.lua`;
-- conditional CPDLC and LevelUp W&B hardening only when those modules are
-  already selected;
-- unknown or structurally incompatible input blocks the transaction.
+The catalog lists 18 items. Fourteen are included in both installation paths;
+two require CPDLC or LevelUp W&B. The remaining two are already handled by
+CPDLC 1.2 or the original .35 Lua and need no further change.
 
-The authored payload anchors are unique on the shared .35 clean baseline and
-do not overlap within a payload. The conditional I06 anchors do not overlap the
-CPDLC 1.2 exact-replacement owners; I33 deliberately targets the completed
-LevelUp W&B surface. The complete composed Lua passes dry syntax and idempotence
-checks, but simulator behavior remains a separate gate.
+## Testing and support
 
-## Support and disclaimer
+Automated checks cover patch application, repeated installation, restoration
+and Lua syntax. The 18-case combination check and standalone installer tests
+passed. These results do not establish how every fix behaves in the simulator;
+see [test results](DRY_TEST_RESULTS.md) for what was checked.
 
-For installation or package support, use only the
-[wahltho Discord server](https://discord.gg/ySS88PMuyC). This is not an
-official Zibo, LevelUp or Laminar Research product, and their support channels
-do not cover it. Keep an aircraft backup, close X-Plane before installation,
-and use the package at your own risk. The software is provided as-is without
-warranty; see `LICENSE`.
+Close X-Plane before installing and keep your own aircraft backup. If you run
+into a problem, report it on the [wahltho Discord server](https://discord.gg/ySS88PMuyC).
+The package is provided as-is; see [LICENSE](LICENSE).
+
+For technical details, see [SOURCE.md](SOURCE.md),
+[PATCH_MATRIX.md](PATCH_MATRIX.md) and `package-plan.json`.

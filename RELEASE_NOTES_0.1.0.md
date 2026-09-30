@@ -1,22 +1,24 @@
 # Intentional Fixes v0.1.0
 
-This is the first public release of an independent, unofficial fix-only Lua
-package for the original Zibo 4.05.35 FMS Lua currently shared by Zibo and
-LevelUp.
+The standalone installer includes 14 FMS fixes for the untouched original
+Zibo 4.05.35 Lua, also used by LevelUp. It covers procedure courses, holds,
+approach reference data, N1 mode changes, go-around detection and VNAV descent
+behavior. See the [fix catalog](https://github.com/wahltho/X-Plane-Zibo-LevelUp-737NG-Intentional-Fixes/blob/main/FIX_CATALOG.md)
+for the full list.
 
-The clean standalone installer contains 14 unconditional fix families. The
-full source package also contains the conditional CPDLC and LevelUp W&B
-corrections used by Maintenance Toolkit composition. See `FIX_CATALOG.md` for
-the complete behavior list.
+Use this installer only on an unmodified .35 Lua file. If you have other Lua
+patches installed, use the Maintenance Toolkit instead. Installation and
+removal are explained in the [installation instructions](https://github.com/wahltho/X-Plane-Zibo-LevelUp-737NG-Intentional-Fixes/blob/main/INSTALLATION.md).
 
-The release never distributes a complete aircraft Lua file and never changes
-`zibomod.xpl`. The standalone installer rejects anything except the exact clean
-.35 source; use the Maintenance Toolkit when other Lua patches are installed.
+The patch adds no FMC pages or options, leaves `zibomod.xpl` unchanged and
+does not distribute a complete aircraft Lua file. Close X-Plane before
+installing and keep your own aircraft backup.
 
-Dry validation is green. Simulator-runtime validation remains separate and is
-not claimed by this release.
+Automated patch-application, installer and Lua-syntax checks passed. These
+are not flight tests; see the [test results](https://github.com/wahltho/X-Plane-Zibo-LevelUp-737NG-Intentional-Fixes/blob/main/DRY_TEST_RESULTS.md)
+for what was checked.
 
-This project is not affiliated with, endorsed by, or supported by Zibo,
-LevelUp or Laminar Research. Support is provided only through the
-[wahltho Discord server](https://discord.gg/ySS88PMuyC). Do not request support
-for this package through official Zibo, LevelUp or Laminar Research channels.
+This is an unofficial patch, not affiliated with, endorsed by or supported
+by Zibo, LevelUp or Laminar Research. For support, use only the
+[wahltho Discord server](https://discord.gg/ySS88PMuyC), not the official
+aircraft support channels.
