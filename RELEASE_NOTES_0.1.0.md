@@ -1,5 +1,10 @@
 # Intentional Fixes v0.1.0
 
+Documentation update — 2026-09-30: the standalone ZIP now includes the revised
+documentation. The installer and patch files are unchanged. The version remains
+0.1.0, but the ZIP has a new SHA-256; use the accompanying checksum file.
+Existing installations do not need to be updated.
+
 The standalone installer includes 14 FMS fixes for the untouched original
 Zibo 4.05.35 Lua, also used by LevelUp. It covers procedure courses, holds,
 approach reference data, N1 mode changes, go-around detection and VNAV descent
