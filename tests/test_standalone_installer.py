@@ -73,14 +73,14 @@ class StandaloneInstallerTests(unittest.TestCase):
         self.assertFalse(state.parent.exists())
 
     def test_modified_clean_source_is_rejected_without_state(self) -> None:
-        self.target.write_bytes(self.target.read_bytes() + b"\n-- foreign edit\n")
+        self.target.write_bytes(self.target.read_bytes() + b"\r\n-- foreign edit\r\n")
         result = self.run_installer("install", expected=1)
         self.assertIn("requires the untouched original", result.stderr)
         self.assertFalse((self.aircraft / ".zibo-intentional-fixes-clean35").exists())
 
     def test_modified_install_is_not_uninstalled_over(self) -> None:
         self.run_installer("install")
-        self.target.write_bytes(self.target.read_bytes() + b"\n-- foreign edit\n")
+        self.target.write_bytes(self.target.read_bytes() + b"\r\n-- foreign edit\r\n")
         result = self.run_installer("uninstall", expected=1)
         self.assertIn("Installed Lua was changed", result.stderr)
         self.assertTrue((self.aircraft / ".zibo-intentional-fixes-clean35/state.json").is_file())

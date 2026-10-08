@@ -27,6 +27,8 @@ PACKAGE_FILES = (
     "package-plan.json",
     "standalone-manifest.json",
     "z_Install.py",
+    "standalone_guard.py",
+    "standalone-ownership.json",
 ) + PAYLOADS
 
 

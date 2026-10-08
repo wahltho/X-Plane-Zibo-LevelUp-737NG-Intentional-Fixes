@@ -1,0 +1,236 @@
+{
+  "schemaVersion": 1,
+  "policy": {
+    "packageId": "wahltho.zibo-40535.intentional-fixes",
+    "displayName": "Intentional Fixes",
+    "repositoryUrl": "https://github.com/wahltho/X-Plane-Zibo-LevelUp-737NG-Intentional-Fixes",
+    "supportedProducts": [
+      "zibo-737ng",
+      "levelup-737ng"
+    ],
+    "moduleIds": [
+      "intentional-fixes-zibo",
+      "intentional-fixes-levelup"
+    ],
+    "targetPaths": [
+      "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua"
+    ],
+    "standaloneEvidencePaths": [
+      ".zibo-intentional-fixes-clean35/state.json",
+      ".patch-ownership/wahltho.zibo-40535.intentional-fixes/receipt.json",
+      ".patch-ownership/wahltho.zibo-40535.intentional-fixes.lock",
+      ".patch-ownership/wahltho.zibo-40535.intentional-fixes/transaction"
+    ],
+    "payloadPaths": [],
+    "markerNamespaces": [
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "namespace": "INTENTIONAL FIX",
+        "blocks": [],
+        "allowedCommentLines": [
+          "-- FIX: INTENTIONAL FIX I05 - Ref-ICAO parsing must use the selected Ref-ICAO APP row.",
+          "-- FIX: INTENTIONAL FIX I06 - PREDEP concatenation must have a route ICAO context.",
+          "-- FIX: INTENTIONAL FIX I06 - answer the current uplink origin if the logon target was cleared.",
+          "-- FIX: INTENTIONAL FIX I07 - PAUSE AT T/D requires an active cruise/T/D context.",
+          "-- FIX: INTENTIONAL FIX I24 - manual N1 retires on an engaged-AP semantic vertical-mode change.",
+          "-- FIX: INTENTIONAL FIX I24 - no FMC N1 reference exists without entered OAT on a non-aspirated aircraft on ground.",
+          "-- FIX: INTENTIONAL FIX I24 - phase and VNAV-arm changes are not manual N1 retirement events.",
+          "-- FIX: INTENTIONAL FIX I24 - the original binary already publishes the normalized PFD vertical mode.",
+          "-- FIX: INTENTIONAL FIX I27 - observed same-arrival landing-flap retraction owns manual FMC go-around inference.",
+          "-- FIX: INTENTIONAL FIX I27 - static flap, thrust and AP state do not prove a go-around.",
+          "-- FIX: INTENTIONAL FIX I33 - a known LevelUp with an invalid contract must never fall back to legacy crew arithmetic.",
+          "-- FIX: INTENTIONAL FIX I33 - do not turn an invalid station contract into a plausible automatic ZFW.",
+          "-- FIX: INTENTIONAL FIX I33 - validate the complete live station contract before publishing automatic FMC ZFW.",
+          "-- FIX: INTENTIONAL FIX I34 - do not command an excessive clean-descent rejoin when speed is not high.",
+          "-- FIX: INTENTIONAL FIX I35 - T/D presence does not revoke go-around ownership.",
+          "-- FIX: INTENTIONAL FIX I35 - a missing T/D is unknown path state, not proof of descent.",
+          "-- FIX: INTENTIONAL FIX I35 - an elapsed T/D does not own phase zero or go-around.",
+          "-- FIX: INTENTIONAL FIX I35 - an upward V/S or LVL CHG target is not descent evidence.",
+          "-- FIX: INTENTIONAL FIX I35 - phase zero is not a valid descent owner."
+        ]
+      }
+    ],
+    "signatures": [
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- FIX: GLS service-level display mapping (GLS/LPV/LP)"
+      },
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- FIX: GLS service-level parse (Type 14 LP/LPV/GLS)"
+      },
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- FIX: GLS approach id (gls_app_id) from words[8] for LPV/GLS best-match"
+      },
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- FIX: GLS course/GS parse (earth_nav format variants)"
+      },
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- FIX: GLS best-match selection (runway + course diff)"
+      },
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- FIX: LP service level is lateral-only; keep MMR vertical deviation off-scale to prevent false LPV/GS behavior"
+      },
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- FIX: track if CIFP provided a true-course value (suffix T)"
+      },
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- FIX: parse course fields that may include TRUE suffix or 1/10 deg units"
+      },
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- FIX: parse TRUE suffix and 1/10 deg units"
+      },
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- FIX: only scale if CIFP provided 1/10 deg units"
+      },
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- FIX: keep published true course for reference"
+      },
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- FIX: convert true to magnetic"
+      },
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- FIX: persist magnetic course"
+      },
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- FIX: avoid indexing before first leg"
+      },
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- FIX: skip stale/deleted duplicate preview legs before decoding CI/VI intercept geometry"
+      },
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- FIX: parse TRUE suffix"
+      },
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- FIX: convert true to magnetic for VOR declination logic"
+      },
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- FIX: only scale if stored in 1/10 units"
+      },
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- FIX: drive the leg with magnetic bearing so ND/FMC match the flown path"
+      },
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- FIX: store magnetic course for downstream consumers"
+      },
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- FIX: convert published true course to magnetic for ND/FMC"
+      },
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- FIX: persist magnetic bearing so subsequent logic uses same reference"
+      },
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- FIX: if CIFP holds omit length (common for PROC HOLD), default to 5 NM only when distance is empty/zero"
+      },
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- FIX: explicit dual-zero check so ARINC \"at\" altitude restrictions are recognised"
+      },
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- FIX: avoid forcing 0 NM holds when no distance/time is published"
+      },
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- FIX: only scale if entry was in 1/10 deg"
+      },
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- FIX: store entered MAG course directly (no extra magvar to avoid double conversion)"
+      },
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- FIX: local magvar for true display"
+      },
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- FIX: detect true-tagged course"
+      },
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- FIX: stored as 1/10 deg; always scale down for display"
+      },
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- FIX: show published TRUE course when flagged or at high magvar"
+      },
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- FIX: mark TRUE course display"
+      },
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- FIX: ARRIVALS page display normalization for approach IDs."
+      },
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- FIX: preserve published IF legs during APP merge/cleanup so PI/common-final joins"
+      },
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- FIX: APP REF ILS/LDA lookup hardening."
+      },
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- FIX: preserve manual/procedure hold identity when stock route mutations temporarily"
+      },
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- FIX: arm an active manual hold intercept without rewriting the new HA/HF/HM row to DF."
+      },
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- FIX: activating a modified route in flight must not strip manual/procedure"
+      },
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- FIX: preserve manual HOLD AT leg semantics on the active route."
+      },
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- FIX: later LEGS pages need the same manual HOLD AT intercept arming as page 1."
+      },
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- FIX: active-route offset sync must not splice over a hold-context leg. Preserve"
+      },
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- FIX: bound climb-restriction scans to climb/neutral route roles and fail closed"
+      },
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- FIX: ALT INTV releases exactly the next committed altitude constraint that"
+      }
+    ],
+    "resultFiles": [],
+    "originalFiles": [],
+    "recoveryInstruction": "Before switching to MTK, use the restore or uninstall procedure documented by this patch, preserving other patches. Then rescan. Instructions: https://github.com/wahltho/X-Plane-Zibo-LevelUp-737NG-Intentional-Fixes#readme."
+  },
+  "nativeState": {
+    "kind": "single",
+    "path": ".zibo-intentional-fixes-clean35/state.json",
+    "packageId": "wahltho.zibo-40535.intentional-fixes.clean-only"
+  }
+}

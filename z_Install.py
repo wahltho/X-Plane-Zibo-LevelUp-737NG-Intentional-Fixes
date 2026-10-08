@@ -3,6 +3,8 @@
 
 from __future__ import annotations
 
+from standalone_guard import native_operation, owned_write, owned_replace, owned_unlink, owned_copy, owned_rmtree, owned_mkdir
+
 import argparse
 import hashlib
 import json
@@ -168,10 +170,10 @@ def target_path(aircraft_root: Path, manifest: dict[str, Any]) -> Path:
 
 
 def write_json_atomic(path: Path, value: dict[str, Any]) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
+    owned_mkdir(path.parent, parents=True, exist_ok=True)
     temporary = path.with_name(path.name + ".tmp")
-    temporary.write_bytes((json.dumps(value, indent=2, sort_keys=True) + "\n").encode("utf-8"))
-    os.replace(temporary, path)
+    owned_write(temporary, (json.dumps(value, indent=2, sort_keys=True) + "\n").encode("utf-8"))
+    owned_replace(temporary, path)
 
 
 def require_clean_source(path: Path, manifest: dict[str, Any]) -> bytes:
@@ -200,6 +202,7 @@ def verify_installed(aircraft_root: Path, manifest: dict[str, Any], state: dict[
         raise InstallerError("Installed Lua was changed or the installation is incomplete")
 
 
+@native_operation
 def command_check(aircraft_root: Path, manifest: dict[str, Any]) -> int:
     validate_payloads(manifest)
     state = load_state(aircraft_root)
@@ -214,6 +217,7 @@ def command_check(aircraft_root: Path, manifest: dict[str, Any]) -> int:
     return 0
 
 
+@native_operation
 def command_install(aircraft_root: Path, manifest: dict[str, Any]) -> int:
     validate_payloads(manifest)
     existing_state = load_state(aircraft_root)
@@ -227,8 +231,8 @@ def command_install(aircraft_root: Path, manifest: dict[str, Any]) -> int:
     state_root = aircraft_root / STATE_DIRECTORY
     timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
     backup = state_root / "backups" / timestamp / safe_relative_path(manifest["target"]["relativePath"])
-    backup.parent.mkdir(parents=True, exist_ok=False)
-    shutil.copy2(destination, backup)
+    owned_mkdir(backup.parent, parents=True, exist_ok=False)
+    owned_copy(destination, backup)
     state = {
         "schemaVersion": 1,
         "packageId": manifest["packageId"],
@@ -243,13 +247,13 @@ def command_install(aircraft_root: Path, manifest: dict[str, Any]) -> int:
     try:
         with tempfile.TemporaryDirectory(prefix="intentional-fixes-stage-", dir=state_root) as name:
             staged = Path(name) / destination.name
-            staged.write_bytes(result)
+            owned_write(staged, result)
             os.chmod(staged, stat.S_IMODE(destination.stat().st_mode))
-            os.replace(staged, destination)
+            owned_replace(staged, destination)
         write_json_atomic(state_path(aircraft_root), state)
     except Exception:
         if backup.exists():
-            shutil.copy2(backup, destination)
+            owned_copy(backup, destination)
         raise
     print(f"Installed {manifest['displayName']} {manifest['packageVersion']}.")
     print(f"Backup: {backup}")
@@ -257,6 +261,7 @@ def command_install(aircraft_root: Path, manifest: dict[str, Any]) -> int:
     return 0
 
 
+@native_operation
 def command_verify(aircraft_root: Path, manifest: dict[str, Any]) -> int:
     validate_payloads(manifest)
     state = load_state(aircraft_root)
@@ -267,6 +272,7 @@ def command_verify(aircraft_root: Path, manifest: dict[str, Any]) -> int:
     return 0
 
 
+@native_operation
 def command_uninstall(aircraft_root: Path, manifest: dict[str, Any]) -> int:
     validate_payloads(manifest)
     state = load_state(aircraft_root)
@@ -280,12 +286,12 @@ def command_uninstall(aircraft_root: Path, manifest: dict[str, Any]) -> int:
     state_root = aircraft_root / STATE_DIRECTORY
     with tempfile.TemporaryDirectory(prefix="intentional-fixes-restore-", dir=state_root) as name:
         staged = Path(name) / destination.name
-        shutil.copy2(backup, staged)
+        owned_copy(backup, staged)
         os.chmod(staged, stat.S_IMODE(destination.stat().st_mode))
-        os.replace(staged, destination)
+        owned_replace(staged, destination)
     if sha256_path(destination) != manifest["target"]["sourceSha256"]:
         raise InstallerError("Restored Lua hash does not match the clean .35 original")
-    shutil.rmtree(state_root)
+    owned_rmtree(state_root)
     print(f"Uninstalled {manifest['displayName']} and restored the exact clean .35 Lua.")
     return 0
 

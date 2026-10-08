@@ -74,3 +74,26 @@ ff313b0e88c62845ad1c4a2b1f4bd599f57d8799e8d6707bfc10a3369fd63a8e
 ```
 
 A different version or a file edited by another patch is rejected.
+
+## Installation ownership
+
+MTK and the standalone installer remain separate supported installation methods.
+Use the same owner for updates and removal. To switch, uninstall through the
+current owner first, then install through the other. Neither installer adopts
+already patched files on the strength of matching hashes alone.
+
+Keep the complete extracted package, including `standalone_guard.py` and
+`standalone-ownership.json`. The standalone installer checks its recorded
+original backups and stops if MTK owns this patch or a shared target file.
+Unknown, duplicate or incomplete patch blocks and unowned companion files also
+block the operation. Other correctly installed patches are preserved.
+
+A failed operation restores the bytes it changed. If the process is interrupted,
+keep the `.patch-ownership` receipt, transaction journal and lock, together with
+any older patch backup/state directory. Do not delete them to retry. Ask for
+support before changing those files.
+
+Older standalone installs without a complete receipt are not automatically
+migrated. Remove them using the installer and original backups that created
+them. This source change affects installation checks only; runtime payloads and
+patch versions are unchanged. Installer and recovery tests cover these checks.
