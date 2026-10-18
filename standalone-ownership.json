@@ -222,6 +222,18 @@
       {
         "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
         "text": "-- FIX: ALT INTV releases exactly the next committed altitude constraint that"
+      },
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- FIX: a passed waypoint restriction cannot become the cruise speed target."
+      },
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- FIX: the displayed CRZ /MCP target belongs to Speed Intervention, not an FMC edit."
+      },
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- FIX: extra step burn reduces arrival fuel; both terms are kilograms."
       }
     ],
     "resultFiles": [],

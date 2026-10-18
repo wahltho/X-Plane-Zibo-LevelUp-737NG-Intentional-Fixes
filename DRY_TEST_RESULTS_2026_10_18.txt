@@ -1,0 +1,185 @@
+Intentional Fixes / I30 + I37-I39 dry tests — 2026-10-18
+=====================================================
+
+Run status: PASS within the offline package/FMS-source scope below.
+11/11 package/component methods, 576/576 released-handler composition cases,
+72/72 composed-output behavior method executions and six complete LuaJIT loads.
+User approved dry tests including MTK combinations and I30 in this turn.
+No real aircraft, simulator, MTK checkout, plugin binary or public release is
+modified. No commit/push/topology action. Only the small test driver is compiled
+against an unchanged published MTK DLL; MTK itself is not rebuilt.
+
+Evidence directory
+------------------
+/Users/wahltho/dev/intentional-fixes-dry-20261018.n8pHn1
+input-pins.json: exact candidate payload/manifest/installer pins and all
+published companion archive/manifest hashes. Original aircraft Lua outputs
+stay local in that evidence directory, never in this repository or release.
+matrix-results.json and behavior-results.json are written only after their
+respective complete runs; an absent file is not a PASS.
+
+Frozen production inputs
+------------------------
+Patch repo main HEAD: fcd9db42f6b1d5301266319a3b801c5802df48e7, with the
+approved uncommitted I30 and I37-I39 changes. Unrelated Zibo main is read-only.
+Original shared .35 Lua:
+ff313b0e88c62845ad1c4a2b1f4bd599f57d8799e8d6707bfc10a3369fd63a8e
+Current standalone installed image:
+48e000794942a37ae661a80f52d2d099b4469528825e42871503e57ca2d2d444
+This result hash is now exercised by the actual standalone lifecycle tests,
+not only an authored metadata expectation.
+Installer after count correction:
+2550ce5d2968ff1849731804980ee2e6e6bda2483cd22daf0eab9fca4f1c1134
+I30 payload:
+0eaa8d94f71717a365a1049f2cf618d793a1dd487fc3d630e4a28cbd9ea46a53
+I37 payload:
+8e7b46b3cda590d49f9ad1987b3f3d9a75260ed00bca1864373cfd6b6573f413
+I38 payload:
+654fa3c140ea4ec1da4cf680c928744dd45f87796cf8b895368c9e7619d3130b
+I39 payload:
+a8bcdf8bba249a7b344d1be7530aeff6f51086dc2daec238566f2a26521bfdfc
+
+Completed package and component tests
+-------------------------------------
+python3 -m unittest discover -s tests -v
+PASS: 11 test methods, 33.250 s, no skips.
+- Three complete-handler I30 methods: first intervention/normal refreshed
+  repeat in climb and go-around; original cruise-altitude fallback; equality,
+  T/C and approach boundaries, same-row MOD edit protection, small lower-MCP
+  descent release, disabled option, press and release position.
+- Three I37-I39 methods: actual bounded CRZ producer branch, both complete
+  FMC 2L handlers, actual bounded W/STEP renderer. Positive/zero/negative fuel
+  delta, KG/LBS, IAS/Mach/DELETE, pending and non-MCP controls are included.
+- Two package contract tests: schema 5, optional/default-disabled modules,
+  unchanged conditional I06/I33, exact payload size/hash, deterministic and
+  complete temporary test ZIP (36 entries). No distribution archive is rebuilt.
+- Three standalone lifecycle methods: check/install/verify/repeat/uninstall
+  with exact original restoration; foreign input rejection; foreign installed
+  edit refusal without removing the saved state or overwriting the edit.
+
+Defect-sensitive controls:
+- I37-I39 corrected tests must PASS and their original .35 counterparts must
+  fail at the named behavioral assertion, not merely fail compilation.
+- I30 first-intervention and fallback tests must PASS and the exact published
+  I30 JSON at fcd9db42 must fail the matching behavioral assertion. The complete
+  original enclosing command handler is executed, not only the added helper.
+- Six behavioral methods also PASS under LuaJIT 2.1.1788856981 (10.581 s).
+  Host Lua/luac is 5.4.8; Python 3.14.3; .NET SDK 10.0.105.
+
+First red run and actual correction
+-----------------------------------
+Initial 8-method run: five PASS, three standalone FAIL. All three stopped at
+load_manifest's old hard-coded requirement for exactly 13 payload documents.
+The package now has 16 documents for 17 unconditional fix families (I02/I03
+share one document). z_Install.py changes only that exact count and its error
+message from 13 to 16. It does NOT remove the count guard or broaden acceptance.
+Source/result hashes, payload digests, duplicate/conditional rejection,
+foreign-file protection, ownership policy and lifecycle assertions remain.
+The next 8-method run PASSed, followed by the final 11-method run above.
+No runtime Lua payload changed during this dry-test turn.
+
+Published MTK inputs and matrix scope
+-------------------------------------
+Public repository: https://github.com/wahltho/xplane-737ng-maintenance-toolkit
+Released v0.29.4 macOS arm64 portable archive SHA-256:
+33bd968190bb7e41ba7a6ac37e62edba433cd5d944528e24ecef2fdf198cc88d
+Unmodified Core DLL extracted from that archive (assembly 0.29.4.0):
+391bfcb9ba7437943a1541fb722bb260bd3c6fdd1d356130e96e8a75a9d15b6d
+Published catalog-v2.0.2, schema 3, SHA-256:
+f1e974bc9fee1295451438766566e036e4e214aed58706f88047e0decfa0dfa9
+This supersedes the local catalog 2.0.0 source-audit snapshot, not its history.
+The preparation script verifies every companion's exact published archive,
+manifest digest and payload size/digest against catalog 2.0.2 before use.
+Only Intentional Fixes is the approved unreleased candidate.
+
+FMS-changing modules, in actual catalog order:
+Zibo: VNAV 10, Auto Jetway 50, CPDLC 60, VREF 65, 27K/SFP 68,
+Intentional Fixes 70, Lua Timer 90.
+LevelUp additionally has W&B 40; its Intentional Fixes catalog group order is
+70, while the package's own unchanged unique module order is 71.
+All subsets of the six Zibo or seven LevelUp companion FMS modules are covered
+with Intentional Fixes selected. Conditional I06/I33 use that actual selection.
+The real released ContentPatchHandlerRegistry handles all source operations,
+including VNAV, exact replacements and marked-block insertion/migration.
+Each case demands byte-identical clean-baseline recomposition, line-ending/BOM
+preservation, all new fixes present and full composed Lua syntax acceptance.
+The six all-selected representatives also require byte-identical reapplication
+of Intentional Fixes itself after all companion operations.
+Zibo: 64 selections x 3 formats = 192 cases.
+LevelUp: 128 selections x 3 formats = 384 cases. Total: 576.
+Version Info, FANS CDU, Calculator and GSE published manifests were inspected;
+they have no target on this FMS Lua. Their other aircraft files are NOT tested
+by this source matrix. Auto Jetway does have an FMS hook and is included.
+
+The first matrix attempt stopped at a test-only BOM assertion. The .NET
+culture-aware StartsWith overload treats the BOM as ignorable. Explicit
+StringComparison.Ordinal corrects that assertion; no Production source,
+payload or expected line-ending behavior was changed to satisfy it.
+The next run completed all 192 Zibo cases, then rejected LevelUp with W&B
+during a whole-pipeline second application on already-composed output. This
+was an incorrect extra test assumption, not a failed first composition:
+I33 deliberately refines W&B's exact installed blocks. MTK 0.29.4 normally
+rebuilds selected shared-file modules from the verified original backup.
+The public v0.29.4 docs/PATCH_INTEROPERABILITY.md states this contract at
+lines 97-100. Decompilation of the pinned, unchanged released Core's
+CompatibilityPackagePlanBuilder confirms the installed-hash match branch
+loads BackupPath and checks OriginalSizeBytes/OriginalSha256 before applying
+the selected operations. The local source agrees, but is not the release proof.
+The test now checks repeated clean-baseline composition, not a fictitious
+in-place overwrite pipeline. All-selected LevelUp also retains the unsupported
+whole-pipeline-on-output rejection as an explicit negative control. No payload,
+W&B source, original-backup logic, catalog or qualification guard was changed.
+Final corrected-contract run: 576 PASS / 0 FAIL (192 Zibo, 384 LevelUp).
+All six all-selected IF self-reapplications are byte-identical. All three
+LevelUp unsupported whole-pipeline-on-output rejection controls pass.
+The actual released schema-5 package loader accepts the candidate structure.
+The actual released planner correctly rejects local candidate release admission:
+"Use the catalog group to install qualified patches. A local manifest is not
+release provenance." This is an expected protection result, not installation
+qualification for the candidate.
+
+Composed-output behavior follow-up: PASS
+----------------------------------------
+All-selected outputs: two products x three formats = six verified byte images.
+Every complete script loads under the existing LuaJIT executable (compile/load
+only, no aircraft startup). Each image then passes the existing six I30/I37-I39
+methods under both Lua 5.4 and LuaJIT: 12 runs x 6 = 72 method executions.
+All logs explicitly report six tests and OK, without skips (10.376-10.641 s
+per run). Original/published defect-sensitive controls remain enabled.
+behavior-results.json confirms every one of the 21 pinned candidate input files
+is unchanged after the full run and records final test/driver source hashes.
+Final driver SHA-256:
+e6f3cf25bd9f9e2f70fa86e39a29f5fe8560aa06564090cedf53c66c68bbd929
+The standalone distribution file list also passes existence/uniqueness checks
+for all 35 entries, including these current reports. No release ZIP is written.
+
+Reproduction
+------------
+After supplying the pinned public archive/Core/catalog in a new evidence
+directory, from the patch repo:
+python3 tests/mtk_matrix/prepare.py <evidence-directory>
+dotnet run --project tests/mtk_matrix/Matrix.csproj --artifacts-path <evidence-directory>/driver-build -p:MtkCoreAssemblyPath=<evidence-directory>/LevelUp.NavTableUpdater.Core.dll -- <evidence-directory>
+python3 tests/mtk_matrix/verify_outputs.py <evidence-directory> <LuaJIT-executable>
+The last step reuses the existing six behavioral oracles on all-selected
+Zibo/LevelUp outputs in all three formats, under both Lua 5.4 and LuaJIT, and
+loads the complete six scripts under LuaJIT without executing aircraft startup.
+
+Limits and remaining gates
+--------------------------
+These are offline source/package tests, not simulator proof or a full-aircraft
+MTK install/update/uninstall/rollback replay. Qualified catalog group admission
+is distinct from patch-handler compatibility. The current approved artifact
+still pins the older published Intentional Fixes; candidate source cannot
+inherit that release proof. Do not alter a catalog/qualification guard to make
+an unreleased candidate look approved. Publication and catalog qualification
+need a separate authorized workflow in the owning thread.
+The I30 scope here is the two repaired regressions plus the listed neighbors,
+not complete ALT INTV certification. Previously recorded concerns about
+structural MOD leg identity, between-altitude windows and external preselected
+altitude provenance remain outside that repair; see the original I30 review.
+Runtime/plugin integration, independent review, build, deploy, commit/push and
+release remain separate gates. No C++ port test or source change is claimed.
+The composed-handler FMC tests stub CPDLC's key hook to yield control. They
+exercise the ordinary CRZ handlers with CPDLC installed, not CPDLC-owned key
+dispatch. The route and renderer cases execute bounded original Lua branches;
+they are not continuous route-lifecycle or full FMS integration replays.

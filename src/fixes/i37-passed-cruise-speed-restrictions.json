@@ -1,0 +1,18 @@
+{
+  "format": "exact-text-replacements-v1",
+  "replacements": [
+    {
+      "name": "I37 reject passed endpoints in the secondary cruise speed scan",
+      "oldLines": [
+        "\t\t\t\t\tfor ii = legs_restr_spd_n, 1, -1 do",
+        "\t\t\t\t\t\tif legs_restr_spd[ii][2] >= td_idx_temp and legs_restr_spd[ii][3] <= B738DR_fmc_cruise_speed then"
+      ],
+      "newLines": [
+        "\t\t\t\t\tfor ii = legs_restr_spd_n, 1, -1 do",
+        "\t\t\t\t\t\t-- FIX: a passed waypoint restriction cannot become the cruise speed target.",
+        "\t\t\t\t\t\t-- Keep early deceleration for a current or future restricted waypoint.",
+        "\t\t\t\t\t\tif legs_restr_spd[ii][2] >= offset and legs_restr_spd[ii][2] >= td_idx_temp and legs_restr_spd[ii][3] <= B738DR_fmc_cruise_speed then"
+      ]
+    }
+  ]
+}

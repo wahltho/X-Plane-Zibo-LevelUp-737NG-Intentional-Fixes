@@ -1,0 +1,55 @@
+{
+  "format": "exact-text-replacements-v1",
+  "replacements": [
+    {
+      "name": "I38 captain CRZ displayed MCP target is read-only",
+      "oldLines": [
+        "\t\telseif page_cruise == 1 then",
+        "\t\t\t-- CRZ speed kts/mach",
+        "\t\t\tif B738DR_flight_phase < 2 or B738DR_flight_phase == 8 or (crz_exec == 0 and B738DR_flight_phase == 2) then",
+        "\t\t\t\t"
+      ],
+      "newLines": [
+        "\t\telseif page_cruise == 1 then",
+        "\t\t\t-- CRZ speed kts/mach",
+        "\t\t\tif B738DR_flight_phase < 2 or B738DR_flight_phase == 8 or (crz_exec == 0 and B738DR_flight_phase == 2) then",
+        "\t\t\t\t-- FIX: the displayed CRZ /MCP target belongs to Speed Intervention, not an FMC edit.",
+        "\t\t\t\tif perf_exec ~= 0 and B738DR_flight_phase == 2 and crz_exec == 0 and crz_spd_exec == 0 and B738DR_ap_spd_interv_status ~= 0 and entry ~= \"\" then",
+        "\t\t\t\t\tif entry == \">DELETE\" then",
+        "\t\t\t\t\t\tadd_fmc_msg(INVALID_DELETE, 0, 0)",
+        "\t\t\t\t\telse",
+        "\t\t\t\t\t\tadd_fmc_msg(INVALID_INPUT, 0, 0)",
+        "\t\t\t\t\tend",
+        "\t\t\t\t\tfmc1_input_lag = 0",
+        "\t\t\t\t\treturn",
+        "\t\t\t\tend",
+        "\t\t\t\t"
+      ]
+    },
+    {
+      "name": "I38 first-officer CRZ displayed MCP target is read-only",
+      "oldLines": [
+        "\t\telseif page_cruise2 == 1 then",
+        "\t\t\t-- CRZ speed kts/mach",
+        "\t\t\tif B738DR_flight_phase < 2 or B738DR_flight_phase == 8 or (crz_exec == 0 and B738DR_flight_phase == 2) then",
+        "\t\t\t\tlocal strlen = string.len(entry2)"
+      ],
+      "newLines": [
+        "\t\telseif page_cruise2 == 1 then",
+        "\t\t\t-- CRZ speed kts/mach",
+        "\t\t\tif B738DR_flight_phase < 2 or B738DR_flight_phase == 8 or (crz_exec == 0 and B738DR_flight_phase == 2) then",
+        "\t\t\t\t-- FIX: the displayed CRZ /MCP target belongs to Speed Intervention, not an FMC edit.",
+        "\t\t\t\tif perf_exec ~= 0 and B738DR_flight_phase == 2 and crz_exec == 0 and crz_spd_exec == 0 and B738DR_ap_spd_interv_status ~= 0 and entry2 ~= \"\" then",
+        "\t\t\t\t\tif entry2 == \">DELETE\" then",
+        "\t\t\t\t\t\tadd_fmc_msg(INVALID_DELETE, 0, 1)",
+        "\t\t\t\t\telse",
+        "\t\t\t\t\t\tadd_fmc_msg(INVALID_INPUT, 0, 1)",
+        "\t\t\t\t\tend",
+        "\t\t\t\t\tfmc2_input_lag = 0",
+        "\t\t\t\t\treturn",
+        "\t\t\t\tend",
+        "\t\t\t\tlocal strlen = string.len(entry2)"
+      ]
+    }
+  ]
+}

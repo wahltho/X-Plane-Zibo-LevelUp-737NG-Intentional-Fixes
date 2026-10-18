@@ -1,4 +1,4 @@
-# First-release candidate matrix
+# Patch coverage — version 0.1.2
 
 See `FIX_CATALOG.md` for the user-facing symptom and corrected-behavior
 description of every family.
@@ -28,16 +28,29 @@ Status vocabulary:
 | I24 | N1 manual/AUTO retirement and unavailable-OAT guard | source-ready |
 | I27 | Manual go-around evidence owner | source-ready |
 | I29 | Dashed SimBrief procedure placeholder normalization | not-applicable: shared clean .35 Lua validates SID/STAR/APP names and clears every non-match before import |
-| I30 | Lower-MCP ALT INTV committed-constraint release | source-ready |
+| I30 | Lower-MCP ALT INTV committed-constraint release | source-ready; repaired boundary/fallback regressions dry-tested, not whole-domain certification |
 | I33 | Dynamic-station ZFW fail-closed behavior | source-ready, conditional: LevelUp W&B |
 | I34 | Clean-descent rejoin VVI clamp | source-ready: bounded at the existing Lua VVI producer |
 | I35 | T/D availability and commanded-descent guards | source-ready |
+| I37 | Passed waypoint exclusion in secondary CRZ speed scan | included in 0.1.2; focused behavior and FMS composition PASS |
+| I38 | Both FMC CRZ LSK2 handlers reject edits to a displayed MCP target | included in 0.1.2; focused behavior and FMS composition PASS |
+| I39 | W/STEP arrival-fuel sign and display-unit conversion | included in 0.1.2; focused behavior and FMS composition PASS |
 
-The first-release source ceiling is closed at 18 fix families: 16 families
-have a Lua delta in 15 payload documents, I14 is inherited from CPDLC 1.2, and
-I29 contributes no artificial no-op payload. Executed package, Lua-load,
-functional and simulator validation remain open. I34 is gated at the existing
+The first release contained 18 fix families in 15 payload documents. The
+0.1.2 release adds I37-I39: 21 families, 19 with a Lua delta in 18 payload
+documents. I14 is inherited from CPDLC 1.2, and I29 needs no artificial no-op
+payload. The standalone source includes 17 families in 16 payload documents.
+The corrected I30 and new payloads pass the 11-method package/component suite,
+576 released-MTK FMS composition cases, six complete-script LuaJIT loads and
+72 composed-output behavior executions. See `DRY_TEST_RESULTS_2026_10_18.txt`
+for exact scope and the corrected MTK repeat contract. Full-aircraft MTK
+installation/recovery, catalog qualification and simulator acceptance remain
+separate. I34 is gated at the existing
 Lua producer by phase, path error, commanded demand and speed evidence; it is
 not an unconditional clamp. The seven later owner candidates I15, I17,
 I18, I25, I26, I28 and I31 are not part of the first source closure. The
 eleven binary-bound families remain excluded.
+
+I36 is reserved by the port inventory for an AP-consumer change requiring a
+binary modification; it is not a missing Lua payload. See
+`CRUISE_FIXES_REVIEW_2026_10_18.txt` for the I37-I39 scope and MTK source audit.

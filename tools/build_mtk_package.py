@@ -12,7 +12,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION = "0.1.1"
+VERSION = "0.1.2"
 PACKAGE_ID = "wahltho.zibo-40535.intentional-fixes"
 REPOSITORY_URL = "https://github.com/wahltho/X-Plane-Zibo-LevelUp-737NG-Intentional-Fixes"
 TARGET = "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua"

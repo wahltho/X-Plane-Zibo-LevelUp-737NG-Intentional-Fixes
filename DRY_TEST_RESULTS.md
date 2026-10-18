@@ -1,4 +1,32 @@
-# Dry-test result — 2026-09-26
+# Dry-test results
+
+Current source, 2026-10-18: **11/11 package, installer and focused behavior tests
+PASS**, including I30 and I37-I39. All six behavior methods also pass under
+LuaJIT. The standalone installed hash is verified by an executed lifecycle test.
+The MTK 0.29.4/catalog 2.0.2 FMS source-composition matrix is **576/576 PASS**.
+All six fully combined output scripts load under LuaJIT and pass six behavior
+methods under both Lua 5.4 and LuaJIT: **72/72 method executions**, no skips.
+Repeated composition uses MTK's verified-original contract. Full-aircraft MTK
+installation/recovery, catalog qualification and simulator acceptance remain
+open. See the
+[current detailed report](DRY_TEST_RESULTS_2026_10_18.txt) for frozen inputs,
+defect-sensitive controls, exact scope and remaining gates. No real aircraft,
+distribution archive or public release has been changed by these tests.
+
+Release follow-up: version 0.1.2 packages these same tested fix payloads. The
+release-version bump and documentation edits are separate from the runs above;
+all 18 payloads and the installer remain byte-identical to their frozen inputs.
+Archive integrity and source equivalence are checked during packaging. This
+does not add simulator evidence or MTK catalog qualification.
+
+## Historical result — 2026-09-26
+
+At the 2026-10-17 review, the I30 boundary defect was found after these checks.
+The repair had not yet been dry-tested. The historical results below do not
+validate its behavior or its new standalone result hash; use the current results
+above for that repair. In
+particular, Lua syntax acceptance did not detect the wrong first-intervention
+scope; an executed full-handler regression case is required before release.
 
 Final source snapshot result: **PASS (18/18 composition cases)**.
 

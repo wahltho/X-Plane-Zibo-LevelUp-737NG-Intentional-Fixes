@@ -1,16 +1,16 @@
 {
   "schemaVersion": 1,
   "packageId": "wahltho.zibo-40535.intentional-fixes.clean-only",
-  "packageVersion": "0.1.0",
+  "packageVersion": "0.1.2",
   "displayName": "Zibo / LevelUp 737NG Intentional Fixes (Clean .35 only)",
   "aircraftFamilies": ["Zibo B737-800X", "LevelUp 737NG Series"],
   "target": {
     "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
     "sourceSha256": "ff313b0e88c62845ad1c4a2b1f4bd599f57d8799e8d6707bfc10a3369fd63a8e",
-    "resultSha256": "49a6ab1f077bca893123f476873ec5e7c9af1d18e31570996a697403ae2c3f70",
+    "resultSha256": "48e000794942a37ae661a80f52d2d099b4469528825e42871503e57ca2d2d444",
     "baselineId": "zibo-4.05.35-shared-by-zibo-and-levelup"
   },
-  "includedFamilies": ["I01", "I02", "I03", "I04", "I05", "I07", "I08", "I09", "I16", "I24", "I27", "I30", "I34", "I35"],
+  "includedFamilies": ["I01", "I02", "I03", "I04", "I05", "I07", "I08", "I09", "I16", "I24", "I27", "I30", "I34", "I35", "I37", "I38", "I39"],
   "excludedConditionalFamilies": ["I06", "I14", "I33"],
   "baselineSatisfiedFamilies": ["I29"],
   "payloads": [
@@ -24,8 +24,11 @@
     { "path": "src/fixes/i16-climb-restriction-domain.json", "size": 2113, "sha256": "0fb92b94ed018328029d13fd232047b4f53673232a3ae214d8bc6c6a762ee7bb" },
     { "path": "src/fixes/i24-n1-owner-and-oat-guard.json", "size": 5692, "sha256": "229cd7506ee33df731ec9a570a5a53d2baab9c58ebd10ed99bfd659367c75743" },
     { "path": "src/fixes/i27-manual-go-around-evidence.json", "size": 4973, "sha256": "2b8dc939554fd9ef1bef9a8b01f96423e1f6f6ca62edf38fe69e728198cd3a1e" },
-    { "path": "src/fixes/i30-alt-intervention-constraint-release.json", "size": 11131, "sha256": "3bb3e308352fcfc4c65ff4a7653cb622f29391147cbb9aff8396e277bcf9db67" },
+    { "path": "src/fixes/i30-alt-intervention-constraint-release.json", "size": 9665, "sha256": "0eaa8d94f71717a365a1049f2cf618d793a1dd487fc3d630e4a28cbd9ea46a53" },
     { "path": "src/fixes/i34-clean-descent-rejoin-vvi.json", "size": 1794, "sha256": "2753c1983644e7056c57c98e7973c874b8529648144fdbe0bb183fb3de1a591f" },
-    { "path": "src/fixes/i35-flight-phase-descent-guards.json", "size": 5346, "sha256": "67bb72e5d144f5a186110bcdbf43b98dfad707f49a00e3b2949543d650bafd2f" }
+    { "path": "src/fixes/i35-flight-phase-descent-guards.json", "size": 5346, "sha256": "67bb72e5d144f5a186110bcdbf43b98dfad707f49a00e3b2949543d650bafd2f" },
+    { "path": "src/fixes/i37-passed-cruise-speed-restrictions.json", "size": 804, "sha256": "8e7b46b3cda590d49f9ad1987b3f3d9a75260ed00bca1864373cfd6b6573f413" },
+    { "path": "src/fixes/i38-cruise-mcp-input-protection.json", "size": 2479, "sha256": "654fa3c140ea4ec1da4cf680c928744dd45f87796cf8b895368c9e7619d3130b" },
+    { "path": "src/fixes/i39-step-arrival-fuel-display.json", "size": 1088, "sha256": "a8bcdf8bba249a7b344d1be7530aeff6f51086dc2daec238566f2a26521bfdfc" }
   ]
 }

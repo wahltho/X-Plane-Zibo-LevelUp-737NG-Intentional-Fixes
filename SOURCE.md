@@ -15,7 +15,9 @@ The standalone installer accepts only the untouched original Zibo 4.05.35 Lua:
 |---|---|
 | Original Zibo 4.05.35 `B738.a_fms.lua` | `ff313b0e88c62845ad1c4a2b1f4bd599f57d8799e8d6707bfc10a3369fd63a8e` |
 | LevelUp repository copy checked on 2026-09-26 | `ff313b0e88c62845ad1c4a2b1f4bd599f57d8799e8d6707bfc10a3369fd63a8e` |
-| Clean-only standalone result | `49a6ab1f077bca893123f476873ec5e7c9af1d18e31570996a697403ae2c3f70` |
+| Published 0.1.0 standalone result | `49a6ab1f077bca893123f476873ec5e7c9af1d18e31570996a697403ae2c3f70` |
+| Historical intermediate I30-only result (not released) | `01bf0a2c2cd873c8880cafed4e3925412afb26c02b4ded57b1e4f46d0e1299de` |
+| Version 0.1.2 standalone result (I30 + I37-I39) | `48e000794942a37ae661a80f52d2d099b4469528825e42871503e57ca2d2d444` |
 
 The two input files were byte-identical when checked. The LevelUp product
 version is not a separate Lua baseline for this release.
@@ -31,18 +33,24 @@ unchanged original binary.
 [PATCH_MATRIX.md](PATCH_MATRIX.md) records the technical status.
 `package-plan.json` defines application order and module requirements.
 
-I02 and I03 share a patch file. The 14 unconditional fixes use 13 patch files.
+I02 and I03 share a patch file. The current 17 unconditional fixes use 16 patch files.
 I06 applies after CPDLC 1.2; I33 applies after LevelUp W&B 0.5.3.
 I14 is already included in CPDLC 1.2, and I29 is already handled by the original
 .35 Lua. Neither needs an additional patch. The standalone installer includes
 only the unconditional fixes.
 
-The Toolkit applies selected functional modules before Intentional Fixes.
+The Toolkit applies the earlier functional modules before Intentional Fixes.
+The current catalog places Lua Timer afterwards (order 90); its anchors are
+unchanged. No module order or dependency has been altered by these additions.
 Unknown or incompatible input is rejected rather than patched by guesswork.
+
+I37-I39 are bounded changes to the original Lua, not copies of the port's
+planner or page architecture. See [the source review](CRUISE_FIXES_REVIEW_2026_10_18.txt)
+for the original blocks, port evidence, existing MTK hooks and open test gates.
 
 ## MTK package
 
-The separate 0.1.1 MTK archive can be generated with:
+The separate 0.1.2 MTK archive can be generated with:
 
 ```text
 python3 tools/build_mtk_package.py --check --archive <output.zip>
@@ -52,10 +60,26 @@ It uses schema 5 and requires Toolkit 0.21.1 or newer. The Zibo module excludes
 I33. The LevelUp module applies I33 only when Weight & Balance is selected.
 Both modules apply I06 only when CPDLC is selected.
 
-This archive is separate from the standalone 0.1.0 installer and contains no
-complete aircraft Lua file.
+This archive is separate from the standalone 0.1.2 installer and contains no
+complete aircraft Lua file. It must be qualified and offered by the MTK catalog
+before managed installation; archive publication does not update that catalog.
 
 ## Checks performed
+
+Version 0.1.2 includes the I30 boundary correction and I37-I39 additions.
+The 11-method package, installer and focused behavior suite passes, including
+exact standalone restoration and defect-sensitive I30/I37-I39 cases. The six
+behavior methods also pass under LuaJIT. All 576 FMS composition cases against
+published MTK 0.29.4/catalog 2.0.2 pass, along with six complete-script LuaJIT
+loads and 72 behavior method executions on fully combined outputs. Repeated
+composition follows MTK's verified-original contract. Full-aircraft MTK
+installation/recovery, catalog release qualification and simulator acceptance
+remain open; see the [current report](DRY_TEST_RESULTS_2026_10_18.txt).
+
+The dry tests ran before the release-version bump. Release preparation changes
+package versions and documentation, not any of the 18 fix payloads or the
+installer. Their hashes are checked against the frozen dry-test inputs; the
+576-case matrix is not claimed as a new run on the versioned release archives.
 
 [DRY_TEST_RESULTS.md](DRY_TEST_RESULTS.md) records the patch-application,
 repeat-application, line-ending, restoration and Lua-syntax checks. These

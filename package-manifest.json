@@ -66,8 +66,8 @@
         },
         {
           "path": "i30-alt-intervention-constraint-release.json",
-          "sha256": "3bb3e308352fcfc4c65ff4a7653cb622f29391147cbb9aff8396e277bcf9db67",
-          "size": 11131
+          "sha256": "0eaa8d94f71717a365a1049f2cf618d793a1dd487fc3d630e4a28cbd9ea46a53",
+          "size": 9665
         },
         {
           "path": "i34-clean-descent-rejoin-vvi.json",
@@ -78,6 +78,21 @@
           "path": "i35-flight-phase-descent-guards.json",
           "sha256": "67bb72e5d144f5a186110bcdbf43b98dfad707f49a00e3b2949543d650bafd2f",
           "size": 5346
+        },
+        {
+          "path": "i37-passed-cruise-speed-restrictions.json",
+          "sha256": "8e7b46b3cda590d49f9ad1987b3f3d9a75260ed00bca1864373cfd6b6573f413",
+          "size": 804
+        },
+        {
+          "path": "i38-cruise-mcp-input-protection.json",
+          "sha256": "654fa3c140ea4ec1da4cf680c928744dd45f87796cf8b895368c9e7619d3130b",
+          "size": 2479
+        },
+        {
+          "path": "i39-step-arrival-fuel-display.json",
+          "sha256": "a8bcdf8bba249a7b344d1be7530aeff6f51086dc2daec238566f2a26521bfdfc",
+          "size": 1088
         }
       ],
       "policy": "optional",
@@ -169,6 +184,24 @@
           "payload": "i35-flight-phase-descent-guards.json",
           "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
           "sourceSha256": []
+        },
+        {
+          "operation": "exact-text-replacements-v1",
+          "payload": "i37-passed-cruise-speed-restrictions.json",
+          "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+          "sourceSha256": []
+        },
+        {
+          "operation": "exact-text-replacements-v1",
+          "payload": "i38-cruise-mcp-input-protection.json",
+          "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+          "sourceSha256": []
+        },
+        {
+          "operation": "exact-text-replacements-v1",
+          "payload": "i39-step-arrival-fuel-display.json",
+          "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+          "sourceSha256": []
         }
       ]
     },
@@ -237,8 +270,8 @@
         },
         {
           "path": "i30-alt-intervention-constraint-release.json",
-          "sha256": "3bb3e308352fcfc4c65ff4a7653cb622f29391147cbb9aff8396e277bcf9db67",
-          "size": 11131
+          "sha256": "0eaa8d94f71717a365a1049f2cf618d793a1dd487fc3d630e4a28cbd9ea46a53",
+          "size": 9665
         },
         {
           "path": "i33-levelup-wb-zfw-gate.json",
@@ -254,6 +287,21 @@
           "path": "i35-flight-phase-descent-guards.json",
           "sha256": "67bb72e5d144f5a186110bcdbf43b98dfad707f49a00e3b2949543d650bafd2f",
           "size": 5346
+        },
+        {
+          "path": "i37-passed-cruise-speed-restrictions.json",
+          "sha256": "8e7b46b3cda590d49f9ad1987b3f3d9a75260ed00bca1864373cfd6b6573f413",
+          "size": 804
+        },
+        {
+          "path": "i38-cruise-mcp-input-protection.json",
+          "sha256": "654fa3c140ea4ec1da4cf680c928744dd45f87796cf8b895368c9e7619d3130b",
+          "size": 2479
+        },
+        {
+          "path": "i39-step-arrival-fuel-display.json",
+          "sha256": "a8bcdf8bba249a7b344d1be7530aeff6f51086dc2daec238566f2a26521bfdfc",
+          "size": 1088
         }
       ],
       "policy": "optional",
@@ -354,13 +402,31 @@
           "payload": "i35-flight-phase-descent-guards.json",
           "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
           "sourceSha256": []
+        },
+        {
+          "operation": "exact-text-replacements-v1",
+          "payload": "i37-passed-cruise-speed-restrictions.json",
+          "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+          "sourceSha256": []
+        },
+        {
+          "operation": "exact-text-replacements-v1",
+          "payload": "i38-cruise-mcp-input-protection.json",
+          "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+          "sourceSha256": []
+        },
+        {
+          "operation": "exact-text-replacements-v1",
+          "payload": "i39-step-arrival-fuel-display.json",
+          "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+          "sourceSha256": []
         }
       ]
     }
   ],
   "packageId": "wahltho.zibo-40535.intentional-fixes",
   "packageType": "compatibilityPackage",
-  "packageVersion": "0.1.1",
+  "packageVersion": "0.1.2",
   "repositoryUrl": "https://github.com/wahltho/X-Plane-Zibo-LevelUp-737NG-Intentional-Fixes",
   "restartRequired": true,
   "schemaVersion": 5,

@@ -1,0 +1,246 @@
+I30 / ALT INTV regression review — 2026-10-17
+===========================================
+
+Verdict
+-------
+Confirmed source-level regression: I30 accidentally puts altitude-constraint
+deletion inside `if first_alt_intv == 0`. The original .35 handler performs
+deletion outside that conditional. A normal VNAV climb can therefore stop
+deleting constraints on every button press, not merely on the first press.
+This can explain ChangeinC's report if the affected operation was in climb.
+The reported flight conditions and installed patch selection are not yet known;
+this is not a reproduction or attribution of that particular flight.
+
+The same overbroad replacement also removes the stock fallback cruise-altitude
+update. That is a second confirmed source difference, described below.
+
+Scope / immutable inputs
+------------------------
+Review only. No payload, generator, installer or manifest changed. No tests,
+composition runs, simulator runs, builds, deployments or releases performed.
+This report is the only new file.
+
+Patch repository: X-Plane-Zibo-LevelUp-737NG-Intentional-Fixes, clean main at
+fcd9db42f6b1d5301266319a3b801c5802df48e7 before this report.
+I30 JSON SHA-256:
+3bb3e308352fcfc4c65ff4a7653cb622f29391147cbb9aff8396e277bcf9db67
+The I30 JSON at initial publication commit 57bc942 has that same hash.
+Generator SHA-256:
+4d29726549680d396dfdd748da81f5b1234593a1400f591b8faf6800b41dd3ae
+
+Original reference:
+/Users/wahltho/dev/Zibo Mod/Original/Zibo Mod Original/B738X_XP12_4_05_35/plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua
+Verified raw SHA-256:
+ff313b0e88c62845ad1c4a2b1f4bd599f57d8799e8d6707bfc10a3369fd63a8e
+Line references below use the original file, retaining its original numbering.
+
+The canonical Zibo Mod main worktree is dirty from unrelated work. Nothing in
+that worktree was changed. Its historical ALT INTV investigation was read as
+background, not used as an authoritative substitute for the original Lua.
+
+1. Root cause: wrong replacement boundary
+-----------------------------------------
+Original .35 handler: lines 83543–83962.
+
+Its relevant structure is:
+
+  press / ALT INTV option enabled
+    VNAV mode handling; may set first_alt_intv = 1
+    if first_alt_intv == 0
+      fallback climb cruise-altitude update
+    end
+    climb or descent constraint deletion
+
+I30's fourth replacement starts at the first climb-phase conditional AFTER
+`if first_alt_intv == 0`, not at the later climb deletion conditional.
+The original fallback and its closing `end` are inside oldLines. The replacement
+does not preserve that fallback or close the first_alt_intv block before its
+helper calls. Its final `end` instead closes that block after deletion:
+
+  press / ALT INTV option enabled
+    VNAV mode handling; may set first_alt_intv = 1
+    if first_alt_intv == 0
+      climb or descent constraint-deletion helper
+    end
+
+Evidence:
+- Original 83556–83572: local flag initialized to 0, then set to 1 for climb
+  or go-around when VNAV is active, vnav_alt_mode == 0, and MCP != cruise.
+- Original 83805–83836: first_alt_intv conditional and stock fallback.
+- Original 83838 onward: deletion is outside that conditional.
+- src/fixes/i30-alt-intervention-constraint-release.json:79–108: replacement
+  includes the fallback and the end of the first_alt_intv conditional.
+- Same JSON:223–235: replacement helper calls precede the closing end.
+- tools/assemble_remaining_payloads.py:581–600: first matching phase-only
+  anchor selects too early; the emitted new_tail encodes the wrong scope.
+
+This is not a syntax error. Both scopes parse, so luac -p cannot distinguish
+the intended handler from the regressed handler.
+
+2. Discriminating static case (not an executed test)
+---------------------------------------------------
+Inputs: command phase 0; ALT INTV option enabled; VNAV active;
+vnav_alt_mode = 0; flight_phase = 1; cruise 35000 ft; MCP 12000 ft;
+aircraft 6000 ft; active offset 2; T/C index 6; an ordinary 8000-ft constraint
+on leg 3; enough route legs; no pending MOD.
+
+The unchanged mode logic sets first_alt_intv to 1 because MCP != cruise.
+It does not change the cruise altitude or phase in this case.
+The constraint is inside the deletion window and below the MCP altitude.
+
+Original .35: leaves the flag conditional, reaches the independent deletion
+block, and clears the leg-3 altitude constraint.
+I30: skips the entire flag conditional, including the helper call. The leg
+and its restriction table remain unchanged. The helper's fms_recalc and
+vnav_update assignments are never reached.
+
+Every subsequent press repeats this result while the same climb/MCP/cruise
+conditions remain. The flag is reset locally and set to 1 again on each call.
+This is the specific mechanism that can make ALT INTV appear disabled.
+
+3. Second regression: fallback cruise-altitude update removed
+------------------------------------------------------------
+The removed original block raises crz_alt_num / fmc_cruise_alt when the handler
+reaches its fallback with a higher MCP in climb or go-around. It also updates
+the displayed cruise altitude, uplink state and speed/mode bookkeeping.
+
+Example: phase 1, VNAV inactive, MCP above cruise, first_alt_intv remains 0.
+The original fallback updates cruise. I30 no longer has that code and merely
+attempts constraint deletion. This is a source-confirmed loss of original
+behavior; its real-aircraft applicability is not established by this audit.
+It is collateral to the overly broad replacement, not needed to explain the
+normal VNAV-climb deletion failure in section 2.
+
+4. Relevant behavior chain and limits
+-------------------------------------
+Input: original command handler, press phase 0 and ALT INTV-option gate.
+Unchanged VNAV mode handling writes first_alt_intv / flight phase / cruise.
+I30 adds the unintended first_alt_intv gate before calling its helper.
+The helper reads offset, tc_idx, ed_found, first_app_idx and legs_restr_alt.
+Eligible mutation writes ACTIVE legs_data[n] altitude slots 5 / 6 / 41.
+It mirrors MOD legs_data2 only under its selected conditions, then schedules
+fms_recalc and vnav_update. The original FMS calculation rebuilds the derived
+restriction table from ACTIVE leg data. Guidance consumes the published FMS
+restriction values, not the helper's return value.
+
+Original table producer: B738_fmc_calc, reset at 160586, row construction at
+160697–160704. Each row stores id / route index / alt1 / type / alt2.
+The table is derived state, not a new cache with independent ownership.
+Existing recalculation, lifetime, invalidation and reuse must be preserved.
+No cache or cache key was changed or bypassed for this review.
+
+Lifecycle classification:
+- Ordinary VNAV climb / GA, MCP != cruise, no VNAV ALT latch: unintended
+  first_alt_intv gate can skip deletion; the phase must remain eligible after
+  the preceding mode handling for this to differ from the original.
+- VNAV ALT latch active: the flag normally stays 0; the identified gate alone
+  does not explain a failure in this branch.
+- Established descent phases 5–7: the flag normally stays 0; a descent report
+  needs further state evidence rather than assuming the climb defect explains it.
+- Cruise / cruise-climb / cruise-descent phases 2–4: deletion still depends
+  on the phase after mode handling; do not invent a new deletion authority.
+- First cruise-to-descent press: a skipped deletion is not by itself a new
+  regression; original descent deletion required descent_now_old > 1.
+- MOD pending / Route 2 / repeated presses / Direct / route edits: the wrong
+  gate is independent of those data states. Once reached, the helper's own
+  mutation/identity rules still require separate behavioral coverage.
+
+Additional concerns, NOT established as causes of the reported failure:
+- I30 mirrors a pending MOD by equal index and altitude tuple, without checking
+  leg identity. Structural MOD edits can invalidate that correspondence. A
+  complete repair must audit mapping, explicit user re-entry, EXEC and ERASE.
+- Its between-altitude predicates do not implement the historical target of
+  retaining a window when the MCP is still inside it. The climb predicate is
+  inherited from original Lua; the descent predicate additionally broadens
+  deletion to alt2 > MCP. This must not be silently called parity.
+- I30 uses preselected_alt for descent release and trailing DES NOW without
+  qualifying all producer states. The original .35 creates this as an external
+  dataref; the Lua handler is empty. Runtime reachability of a wrong-reference
+  no-op is not proven here. Do not assert the original binary's producer
+  semantics from the current custom C++ implementation.
+
+No other package payload references this handler / helper / first_alt_intv;
+the direct control-flow regression is local to I30. Other patches can change
+the flight phase or derived inputs, so a composed behavioral check is still
+needed before a correction is released.
+
+5. Necessary repair direction and validation gate
+-------------------------------------------------
+Preserve the original fallback and end its first_alt_intv conditional before
+constraint deletion. Derive the replacement from a deletion-specific boundary,
+not the first repeated phase-only line. Correct both the JSON and its authoring
+generator; otherwise regeneration restores the defect.
+
+Do not call the whole I30 domain fixed after changing only an end statement:
+the collateral fallback loss, window eligibility, ACTIVE/MOD identity and
+descent reference semantics also need explicit classification.
+
+Required future behavioral cases include the static discriminator above,
+repeat presses separated by normal recalc, VNAV ALT climb/descent release,
+MCP equal / inside / outside restrictions, T/C and first-approach boundaries,
+no-MOD and edited/structurally shifted MOD with EXEC/ERASE, cruise transitions,
+and Zibo/LevelUp plus the supported functional-module combinations.
+Execute the complete command handler, not just the new helper: a helper-only
+test cannot expose the wrong enclosing first_alt_intv conditional.
+
+Existing tests were inspected, NOT run: tests/test_mtk_package.py verifies
+manifest/archive structure; tests/test_standalone_installer.py covers installer
+lifecycle and optionally Lua syntax. Neither executes this ALT INTV behavior.
+Prior green packaging/syntax evidence therefore does not falsify the finding.
+
+User's current request is analysis. Production correction, independent review
+where required, separately approved behavioral tests and runtime confirmation
+remain open. No claim is made that ChangeinC's specific flight is reproduced.
+
+Implementation follow-up, 2026-10-17
+------------------------------------
+User subsequently approved both confirmed-defect repairs. I30 replacement #4
+now begins at the phase conditional PLUS its deletion-specific comment, after
+the first_alt_intv fallback. The fallback is left in the baseline untouched;
+the extra closing end in newLines is removed. The authoring generator uses
+the same function-local two-line boundary instead of a repeated phase-only
+line and hard-coded file offset. No other I30 behavior was changed.
+
+Payload SHA256: 0eaa8d94f71717a365a1049f2cf618d793a1dd487fc3d630e4a28cbd9ea46a53
+Payload size: 9665 bytes.
+Generator SHA256: d9ca3f7617533e68331d38c73c5a0d2aeda6030c4b79d6078a803a1764b8b4a6
+Expected standalone byte-image SHA256:
+01bf0a2c2cd873c8880cafed4e3925412afb26c02b4ded57b1e4f46d0e1299de
+That byte image was constructed in memory to maintain the manifest, without
+writing a full upstream Lua file, running an installer, executing Lua, building
+an archive or running a dry-test suite. It is not behavioral evidence.
+
+Standalone payload metadata, both MTK module payload records, and the existing
+standalone test's expected-byte constant were updated. The clean input hash
+and all lifecycle assertions remain unchanged; no assertion was removed or
+weakened. Documentation distinguishes the released and unreleased images.
+Package versions, published archives and MTK application source are unchanged.
+
+Post-implementation static review: original fallback/closing scope, helper
+call placement, generator/payload boundary agreement and metadata diff read.
+git diff --check: clean. This was a self-review, not an independent review.
+Behavioral, composition, installer, Lua syntax and simulator tests were NOT
+run. Independent review and test/runtime gates remain open. The additional
+Lua concerns listed in section 4 remain outside these confirmed-defect repairs.
+
+The separate C++ MOD-ownership correction is documented at:
+/Users/wahltho/Documents/Projects/Zibo Mod/Documentation/investigations/
+ensb_alt_intv_vnav_alt_2026_09_10/REPAIR_2026_10_17.txt
+
+Approved dry-test follow-up, 2026-10-18
+--------------------------------------
+The current 11-method package suite passes. Three methods execute the complete
+composed ALT INTV command handler, including its enclosing first_alt_intv scope.
+First/repeated intervention (with normal restriction refresh) and the original
+cruise-altitude fallback pass; the exact published old I30 payload fails at
+the matching named assertions. Boundary, same-row explicit MOD edit, small
+lower-MCP descent release, disabled option and key-position neighbors pass.
+The six combined I30/I37-I39 behavior methods also pass under LuaJIT.
+The standalone lifecycle verifies the current I30 + I37-I39 installed image
+48e000794942a37ae661a80f52d2d099b4469528825e42871503e57ca2d2d444
+and exact original restoration. Current MTK matrix status is maintained in
+DRY_TEST_RESULTS_2026_10_18.txt, not inferred from these component results.
+This does not close structural MOD identity/EXEC/ERASE, between-altitude window
+semantics, external preselected-altitude provenance or simulator acceptance.
+No C++ port test or source change was made in this dry-test turn. Independent
+review, build, deploy, commit/push and release are still separate gates.

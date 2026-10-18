@@ -1,0 +1,23 @@
+{
+  "format": "exact-text-replacements-v1",
+  "replacements": [
+    {
+      "name": "I39 subtract extra step burn before converting arrival fuel to display units",
+      "oldLines": [
+        "\t\t\t\t\t\t\t\tif units == 0 then",
+        "\t\t\t\t\t\t\t\t\tline4_l = line4_l .. string.format(\"%4.1f\", (legs_data[prev_idx][40] / 1000) * KGS_LBS + (sc_fuel_delta / 1000))",
+        "\t\t\t\t\t\t\t\telse",
+        "\t\t\t\t\t\t\t\t\tline4_l = line4_l .. string.format(\"%4.1f\", (legs_data[prev_idx][40] / 1000) + (sc_fuel_delta / 1000))",
+        "\t\t\t\t\t\t\t\tend"
+      ],
+      "newLines": [
+        "\t\t\t\t\t\t\t\t-- FIX: extra step burn reduces arrival fuel; both terms are kilograms.",
+        "\t\t\t\t\t\t\t\tif units == 0 then",
+        "\t\t\t\t\t\t\t\t\tline4_l = line4_l .. string.format(\"%4.1f\", ((legs_data[prev_idx][40] - sc_fuel_delta) / 1000) * KGS_LBS)",
+        "\t\t\t\t\t\t\t\telse",
+        "\t\t\t\t\t\t\t\t\tline4_l = line4_l .. string.format(\"%4.1f\", (legs_data[prev_idx][40] - sc_fuel_delta) / 1000)",
+        "\t\t\t\t\t\t\t\tend"
+      ]
+    }
+  ]
+}

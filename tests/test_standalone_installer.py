@@ -17,7 +17,9 @@ DEFAULT_BASELINE = Path(
     "B738X_XP12_4_05_35/plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua"
 )
 SOURCE_HASH = "ff313b0e88c62845ad1c4a2b1f4bd599f57d8799e8d6707bfc10a3369fd63a8e"
-RESULT_HASH = "49a6ab1f077bca893123f476873ec5e7c9af1d18e31570996a697403ae2c3f70"
+# Expected bytes include the I30 repair and the three unreleased cruise fixes.
+# Installer lifecycle assertions and the verified clean-source hash stay intact.
+RESULT_HASH = "48e000794942a37ae661a80f52d2d099b4469528825e42871503e57ca2d2d444"
 RELATIVE_TARGET = Path("plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua")
 
 

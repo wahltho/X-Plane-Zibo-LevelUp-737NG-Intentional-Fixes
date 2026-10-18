@@ -1,0 +1,168 @@
+I37-I39 Lua additions / MTK source compatibility — 2026-10-18
+==========================================================
+
+Historical source-review snapshot, before the subsequent approved dry tests.
+Current executed results and remaining gates are recorded separately in
+DRY_TEST_RESULTS_2026_10_18.txt; the original review statements below retain
+their pre-test scope and must not be read as the current test status.
+
+Status
+------
+All three approved fixes are implemented as bounded Lua replacement payloads.
+This is an author source review, not an independent review or executed test.
+The corrected I30 work already present in this checkout is preserved.
+No C++ port, MTK source, aircraft installation or published archive was changed.
+No dry test, Lua interpreter, installer, package build or simulator was run.
+Nothing was committed or pushed. Existing version numbers are not a new release.
+
+Source boundaries
+-----------------
+Patch checkout: X-Plane-Zibo-LevelUp-737NG-Intentional-Fixes, main,
+HEAD fcd9db42f6b1d5301266319a3b801c5802df48e7; existing dirty I30 work retained.
+Reference root (all original line numbers below):
+/Users/wahltho/dev/Zibo Mod/Original/Zibo Mod Original/B738X_XP12_4_05_35
+Reference file: plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua
+Original SHA-256:
+ff313b0e88c62845ad1c4a2b1f4bd599f57d8799e8d6707bfc10a3369fd63a8e
+LevelUp uses this same original Lua baseline, not a separate LevelUp FMS variant.
+Port evidence is read-only in /Users/wahltho/Documents/Projects/Zibo Mod.
+The port's broader planner/page changes are not copied into this package.
+
+I37 — Passed waypoint restrictions must not become CRZ speed targets
+------------------------------------------------------------------
+Reference owner: B738_restrict_data, original 149880 onward.
+The output speed/id/index/target tuple resets on each call (149915 onward).
+The first cruise scan already requires the endpoint to be at/after offset;
+the missed-approach scan also starts at offset. The secondary reverse scan
+(150257 onward) only checked the T/C/SID boundary, allowing a passed endpoint
+to satisfy decel_before_idx < offset and be republished as a live restriction.
+
+Invariant: a selected restriction endpoint is at/after the current active leg.
+The deceleration lead may legitimately be behind it. The new guard therefore
+checks endpoint >= offset, not decel_before_idx >= offset. It retains the
+existing phase 2-4, T/C/SID boundary, cruise speed and distance gates.
+The reverse search continues after excluding a passed candidate.
+
+Lifecycle/consumer boundary: retain the shared restriction table and historical
+route data; do not clear/re-key any cache, alter offset, change route geometry
+or introduce another publisher. The existing producer recalculates admission
+from the current offset and publishes the same output tuple to existing FMC
+and plugin consumers. Direct/route edits/reset still use their existing data
+rebuild and publication paths; there is no permanent waypoint blacklist.
+The CLB, DES and missed-approach selection code is not rewritten.
+
+Port reference: commit ed31443b;
+Documentation/investigations/egpe_ensb_speed210_2026_10_06/RESULT.md and
+INDEPENDENT_REVIEW.md. Those historical port checks do not validate this Lua.
+
+I38 — A displayed CRZ /MCP target is not an FMC edit field
+--------------------------------------------------------
+Original handlers: B738_fmc1_2L_CMDhandler (62301 onward), CRZ branch 63595;
+B738_fmc2_2L_CMDhandler (88075 onward), CRZ branch 89379.
+Renderer: B738_fmc_cruise (119898 onward), target formatting 120094 onward.
+The renderer already displays the MCP target in IAS and Mach. A pending
+crz_spd_exec MOD target takes precedence and is not an MCP-owned field.
+
+Both handlers now reject non-empty edits before staging a target when the
+ordinary phase-2 CRZ page is initialized, crz_exec == 0, crz_spd_exec == 0,
+and Speed Intervention is active. DELETE reports INVALID_DELETE; other inputs
+report INVALID_INPUT on the correct CDU. Scratchpad content is preserved.
+Each early return resets its input lag; the original release path remains.
+Empty input keeps its stock INVALID_INPUT path. Pre-cruise, go-around,
+uninitialized performance, managed speed and pending MOD editing are unchanged.
+Phase-3/4 CRZ CLB/DES handlers remain outside the new guard.
+No new EXEC/MOD state, AP dataref, formatter, page or option is introduced.
+
+Port reference: commit 0f684ca0;
+Documentation/investigations/crz_lsk2_mcp_2026_10_10.md, including the existing
+FCOM 11.42.28 evidence. The Lua display needed no port-style display repair.
+
+I39 — W/STEP fuel uses one mass unit and the correct sign
+------------------------------------------------------
+Original calc_step_point sets sc_fuel_delta = sc_crz_fuel - crz_fuel (162735).
+Positive delta therefore means additional burn. Both are calculated from the
+same fuel-flow mass basis. Route fuel starts from simDR_fuel_weight or entered
+fuel converted to kg (159635 onward); legs_data[n][40] stores kg (160862),
+including the destination copy (161157/161160). KGS_LBS is defined at 533.
+
+Only the W/STEP arm in B738_fmc_cruise (120339 onward) changes:
+arrival fuel kg = existing predicted arrival fuel kg - sc_fuel_delta kg.
+Divide by 1000 and, for LBS, convert the complete difference with KGS_LBS.
+This fixes both the extra-burn sign and the previously unconverted LBS delta.
+Example: 10,000 kg base and 2,000 kg extra burn display 8.0 or 17.6 respectively.
+Zero and negative deltas use the same expression; savings increase arrival fuel.
+Existing step availability/validity gates, destination selection, ordinary
+non-step fuel, sc_sav_pen and the step planner/cost model remain unchanged.
+No output dataref, cache or shared fuel value is mutated by this display fix.
+Port reference: commit 8d1b62945; only its arrival-fuel correction is adopted.
+
+MTK source compatibility audit (not an executed combination matrix)
+-----------------------------------------------------------------
+Inputs: local MTK Releases/catalog/content-package-catalog.json, catalog 2.0.0,
+minimum Toolkit 0.29.0, and local functional-patch source checkouts. This is a
+local catalog snapshot, not a fresh remote-release verification.
+Catalog SHA-256:
+7d78dfdf8fe9abdd24bcc49c328e8a17413348605bedd914bda42a841ffead4f
+The existing schema-5 exact-text format, strict block matching, module
+dependencies, optional/default-disabled policy and conditional I06/I33 remain.
+Both product modules receive I37-I39 unconditionally. No MTK code is changed.
+
+Relevant existing anchors and order:
+- VNAV/Descent Tables: jit.off and take_alt_dist/take_alt_dist_mach insertions;
+  no new payload touches those anchors or the descent table implementations.
+- CPDLC: captain 2L hook is at the handler prefix; I38 is inside the later CRZ
+  branch, leaving CPDLC's early-return hook and existing conditional I06 intact.
+- LevelUp W&B: bindings, station/ZFW reader and flight_start decorator remain;
+  no I37-I39 target overlaps them. Conditional I33 remains conditional.
+- Calculator, Auto Jetway, FANS CDU, VREF, 27K/SFP and GSE: inspected local
+  sources have no replacement of the three changed CRZ/FMS blocks.
+- Lua Timer: jit.off loader and nd_calc_brg/nd_calc_dist2 wrappers are unchanged.
+  Catalog order 90 is AFTER Intentional Fixes (group order 70), not before it.
+- Package module orders 70 (Zibo) and 71 (LevelUp) remain unchanged; the catalog
+  adapter's group order remains unchanged as well. No manual reorder is needed.
+
+Ownership: new -- FIX: comment signatures are registered in the standalone
+policy. They do not introduce an unknown INTENTIONAL FIX namespace comment
+into the published MTK's strict namespace allowlist. Existing namespace rules,
+source hashes, receipts, ownership checks and fail-closed paths are unchanged.
+This does not authorize migration/adoption of old or foreign standalone files.
+The standalone still accepts ONLY the untouched shared original .35 file.
+
+Package metadata / authored regression cases
+--------------------------------------------
+I37 payload: 804 bytes,
+8e7b46b3cda590d49f9ad1987b3f3d9a75260ed00bca1864373cfd6b6573f413
+I38 payload: 2479 bytes,
+654fa3c140ea4ec1da4cf680c928744dd45f87796cf8b895368c9e7619d3130b
+I39 payload: 1088 bytes,
+a8bcdf8bba249a7b344d1be7530aeff6f51086dc2daec238566f2a26521bfdfc
+Authored expected clean-standalone result (not an installer test result):
+48e000794942a37ae661a80f52d2d099b4469528825e42871503e57ca2d2d444
+Source totals: 21 catalog families, 19 Lua-delta families, 18 payload documents;
+17 unconditional families in 16 standalone payloads. I02/I03 share a payload.
+I14 is inherited from CPDLC; I29 is baseline-satisfied. I36 requires a binary
+change in the port inventory and is deliberately not a missing Lua payload.
+
+tests/test_cruise_fix_payloads.py is authored, NOT RUN. Its planned cases:
+- Actual CRZ selection branch, phases 2-4, passed/current/future endpoints,
+  distance boundary, valid short-leg lead, mixed candidates and index retreat.
+- Both complete 2L handlers, IAS/Mach/DELETE rejection, correct CDU message,
+  scratchpad/input-lag/release lifecycle, pending and non-MCP controls.
+- Actual W/STEP renderer fragment, positive/zero/negative delta, KG and LBS.
+Each corrected oracle also requires the original Lua to fail with a specific
+defect witness, not merely a syntax/runtime error. These are focused component
+tests with stubbed surroundings, NOT full route lifecycle or simulator proof.
+Existing package-count/hash expectations are updated, not relaxed.
+Author static review found no remaining source blocker in these three bounded
+changes. git diff --check passed for tracked changes; this is whitespace
+inspection only and does not validate composition or Lua execution.
+
+Open gates
+----------
+Fresh dry-test approval is required before executing any of these tests.
+Then run focused cases plus established installer/package/combination checks,
+including corrected I30; actual MTK engine composition, reapplication, supported
+line endings, ownership rejection/restoration and selected functional modules.
+Independent review and simulator acceptance remain separate evidence gates.
+Build/deploy/commit/push/publication are not authorized by this source approval.
+Do not overwrite old release ZIPs with these behavioral changes as a doc update.

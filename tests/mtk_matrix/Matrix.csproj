@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Test driver only. Never rebuild MTK or reference its source project. -->
+    <Reference Include="LevelUp.NavTableUpdater.Core">
+      <HintPath>$(MtkCoreAssemblyPath)</HintPath><Private>true</Private>
+    </Reference>
+  </ItemGroup>
+</Project>

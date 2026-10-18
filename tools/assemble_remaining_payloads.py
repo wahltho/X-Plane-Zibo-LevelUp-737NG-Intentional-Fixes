@@ -578,11 +578,21 @@ function B738_autopilot_alt_interv_CMDhandler(phase, duration)
         "\t\t\t\t\telseif B738DR_flight_phase == 2 and B738DR_mcp_alt_dial < crz_alt_num then",
         zibo, levelup,
     ))
-    start = next(i for i, line in enumerate(zibo) if line == "\t\t\t\tif B738DR_flight_phase < 2 or B738DR_flight_phase == 8 then" and i > 83000)
-    end = next(i for i in range(start, len(zibo)) if zibo[i] == "\t\t\t-- end") + 1
-    old_tail = zibo[start:end]
-    if occurrences(levelup, old_tail) != 1:
-        raise ValueError("I30 deletion tail differs on LevelUp clean baseline")
+    # The phase conditional also occurs in the preceding first_alt_intv
+    # fallback. Preserve that entire fallback and its closing end; replace
+    # only the independently owned constraint-deletion block.
+    handler = function_surface(zibo, "B738_autopilot_alt_interv_CMDhandler")
+    deletion_anchor = [
+        "\t\t\t\tif B738DR_flight_phase < 2 or B738DR_flight_phase == 8 then",
+        "\t\t\t\t\t-- delete alt restricts to MCP alt",
+    ]
+    if occurrences(handler, deletion_anchor) != 1:
+        raise ValueError("I30: deletion-specific handler boundary is not unique")
+    start = next(i for i in range(len(handler) - 1) if handler[i:i + 2] == deletion_anchor)
+    end = next(i for i in range(start, len(handler)) if handler[i] == "\t\t\t-- end") + 1
+    old_tail = handler[start:end]
+    if occurrences(zibo, old_tail) != 1 or occurrences(levelup, old_tail) != 1:
+        raise ValueError("I30 deletion tail is not unique on both clean baselines")
     new_tail = block(r'''
 				if B738DR_flight_phase < 2 or B738DR_flight_phase == 8 then
 					B738_alt_intv_release_next_constraint(true)
@@ -594,7 +604,6 @@ function B738_autopilot_alt_interv_CMDhandler(phase, duration)
 						td_alt2_old = td_alt2
 					end
 				end
-			end
 			-- end
 ''')
     i30.append({"name": "I30 phase-independent next-constraint deletion", "oldLines": old_tail, "newLines": new_tail})

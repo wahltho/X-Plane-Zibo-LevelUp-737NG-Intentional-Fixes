@@ -8,8 +8,8 @@ The I-numbers are reference IDs used in the patch files and technical notes.
 
 ## Available with either installer
 
-These 14 fixes are included with both Toolkit installation and the
-clean-.35 standalone installer.
+Version 0.1.2 contains 17 fixes for both installation methods, including the
+I30 repair and the three new fixes I37-I39.
 
 ### I01 — GLS, LPV and LP approach data
 
@@ -110,6 +110,24 @@ including during initialization or a go-around. V/S or LVL CHG could also
 count as descent while targeting a higher altitude. The fix checks these cases
 before changing flight phase and requires a lower selected altitude for
 V/S or LVL CHG descent.
+
+### I37 — Passed speed restrictions in cruise
+
+A waypoint speed restriction already passed during climb could return as the
+cruise speed target. The fix rejects restrictions behind the active waypoint.
+It keeps early deceleration for restrictions that still lie ahead.
+
+### I38 — MCP speed on the CRZ page
+
+During Speed Intervention, the CRZ page shows the MCP-selected speed. Both
+FMCs now reject attempts to change or delete that displayed target. A pending
+FMC speed modification remains editable, and the MCP controls work as before.
+
+### I39 — W/STEP arrival fuel
+
+The W/STEP fuel estimate could increase when a step used more fuel, or decrease
+when it saved fuel. The fix corrects the sign and converts the fuel difference
+consistently for KG and LBS display. It does not replace the step calculation.
 
 ## Applied by the Toolkit when the relevant module is selected
 

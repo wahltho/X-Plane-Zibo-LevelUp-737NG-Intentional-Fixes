@@ -3,7 +3,7 @@
   "name": "Zibo / LevelUp 737NG Intentional Fixes",
   "fixCatalog": "FIX_CATALOG.md",
   "scope": "fix-only",
-  "composition": "after-all-selected-functional-modules",
+  "composition": "catalog-order-after-earlier-functional-modules-before-lua-timer",
   "standalone": {
     "manifest": "standalone-manifest.json",
     "installer": "z_Install.py",
@@ -33,12 +33,15 @@
     { "ids": ["I30"], "mode": "payload", "path": "src/fixes/i30-alt-intervention-constraint-release.json" },
     { "ids": ["I33"], "mode": "conditional-payload", "condition": "levelup-wb-surface-present", "path": "src/fixes/i33-levelup-wb-zfw-gate.json" },
     { "ids": ["I34"], "mode": "payload", "path": "src/fixes/i34-clean-descent-rejoin-vvi.json" },
-    { "ids": ["I35"], "mode": "payload", "path": "src/fixes/i35-flight-phase-descent-guards.json" }
+    { "ids": ["I35"], "mode": "payload", "path": "src/fixes/i35-flight-phase-descent-guards.json" },
+    { "ids": ["I37"], "mode": "payload", "path": "src/fixes/i37-passed-cruise-speed-restrictions.json" },
+    { "ids": ["I38"], "mode": "payload", "path": "src/fixes/i38-cruise-mcp-input-protection.json" },
+    { "ids": ["I39"], "mode": "payload", "path": "src/fixes/i39-step-arrival-fuel-display.json" }
   ],
   "summary": {
-    "fixFamilies": 18,
-    "familiesWithLuaDelta": 16,
-    "payloadDocuments": 15,
+    "fixFamilies": 21,
+    "familiesWithLuaDelta": 19,
+    "payloadDocuments": 18,
     "functionalModuleSatisfiedFamilies": 1,
     "baselineSatisfiedFamilies": 1
   }

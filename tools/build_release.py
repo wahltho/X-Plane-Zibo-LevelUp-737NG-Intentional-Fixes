@@ -16,9 +16,12 @@ PACKAGE_PLAN = json.loads((REPOSITORY_ROOT / "package-plan.json").read_text(enco
 PAYLOADS = tuple(row["path"] for row in PACKAGE_PLAN["families"] if "path" in row)
 PACKAGE_FILES = (
     "CHANGELOG.md",
+    "CRUISE_FIXES_REVIEW_2026_10_18.txt",
     "DRY_TEST_RESULTS.md",
+    "DRY_TEST_RESULTS_2026_10_18.txt",
     "FIX_CATALOG.md",
     "INSTALLATION.md",
+    "I30_ALT_INTV_REVIEW_2026_10_17.txt",
     "LICENSE",
     "PATCH_MATRIX.md",
     "README.md",

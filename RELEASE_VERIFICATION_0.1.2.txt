@@ -1,0 +1,69 @@
+Intentional Fixes 0.1.2 — release packaging record, 2026-10-18
+===========================================================
+
+Scope
+-----
+New standalone and MTK source archives, one new v0.1.2 release.
+No replacement of old release assets, aircraft deployment, binary change,
+MTK repository/catalog modification or new simulator evidence.
+Publication follows the source commit and push; this file records packaging,
+not a claim that MTK has admitted the new release to its catalog.
+
+Dry-test provenance
+-------------------
+Evidence: /Users/wahltho/dev/intentional-fixes-dry-20261018.n8pHn1
+See DRY_TEST_RESULTS_2026_10_18.txt for the completed run and its limits.
+input-pins.json SHA-256:
+53b60b8d9ea318e011d4861f3516b02d23ed4f437e65404329a356464dfa7dab
+matrix-results.json SHA-256:
+7cb84f58c0e503af8f00ba7f76e819a3f3c2d06d7f8fda27a70987e56f9b3411
+behavior-results.json SHA-256:
+8a7ae6e3332a25c88bef23a7bedc4ae4c89ad28e191031bdcd9fb755739593cc
+
+All 18 fix payload files and z_Install.py match the frozen input-pins.json
+hashes exactly. No Lua payload or installer changed during release preparation.
+The MTK manifest differs from the tested candidate only in packageVersion,
+0.1.1 to 0.1.2. Reversing the standalone manifest's version-only edit from
+0.1.2 to 0.1.0 reproduces its exact frozen pre-release manifest hash.
+The package-contract test's version expectation and temporary archive filename
+were updated to 0.1.2; no test assertion was removed or relaxed.
+No new unit suite, MTK composition matrix or runtime test was run for packaging.
+The earlier 11/11, 576/576 and 72/72 results are not represented as new runs
+against these release ZIPs. Archive inspection is packaging verification only.
+
+Archive verification
+---------------------
+Both existing deterministic builders were used from the patch repository.
+ZIP CRC inspection succeeds; every entry is unique and byte-identical to its
+expected source or generated manifest. No complete .lua or .xpl is included.
+The checksum files match the archive bytes and use the archive basename.
+
+Standalone: 35 entries, 84321 bytes
+X-Plane-Zibo-LevelUp-737NG-Intentional-Fixes-v0.1.2.zip
+SHA-256: 04f0e10ee96a69d07324b194cb47deccee526ac96b3eecbfd7e2cefa852f4de0
+MTK source: 36 entries, 58470 bytes
+X-Plane-Zibo-LevelUp-737NG-Intentional-Fixes-MTK-v0.1.2.zip
+SHA-256: 7bfd3df26a75ee4e47a6525613f7bdb4e2069202a26ebdfa764365b34a62cef1
+
+The standalone installed image remains:
+48e000794942a37ae661a80f52d2d099b4469528825e42871503e57ca2d2d444
+Standalone contains 17 fix families in 16 payload documents. The MTK variants
+also include I06 only with CPDLC and I33 only for LevelUp with W&B selected.
+Earlier functional modules precede Intentional Fixes; Lua Timer follows it.
+
+Public handoff
+--------------
+Both packages are 0.1.2. README and release notes distinguish the downloads,
+explain the clean-.35 restriction, and direct support to wahltho Discord.
+Older standalone versions must be removed with their original installer and
+backups before installing 0.1.2. No in-place upgrade or ownership adoption.
+MTK catalog qualification and a full-aircraft install/update/recovery replay
+remain separate. Do not bypass the catalog's release-provenance guard.
+I30 tests cover the repaired regressions and named neighbors, not whole-domain
+ALT INTV certification. No independent-review or simulator acceptance is added.
+
+Existing public ZIP digests read before publication (preserve unchanged):
+v0.1.0 standalone:
+dd754e1c79da568323f6991d508db4acb08accab6e453c1a3977dc6ce79286d9
+v0.1.1 MTK:
+f32e1e357768d93e2312cf42b866d82ed98a28fc7d7ce7de94fd2b99731c5dcb
