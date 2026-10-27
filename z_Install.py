@@ -64,8 +64,8 @@ def load_manifest() -> dict[str, Any]:
         if not isinstance(target.get(field), str) or len(target[field]) != 64:
             raise InstallerError(f"Invalid target {field}")
     payloads = manifest.get("payloads")
-    if not isinstance(payloads, list) or len(payloads) != 16:
-        raise InstallerError("Standalone manifest must contain exactly 16 clean-only payloads")
+    if not isinstance(payloads, list) or len(payloads) != 17:
+        raise InstallerError("Standalone manifest must contain exactly 17 clean-only payloads")
     return manifest
 
 

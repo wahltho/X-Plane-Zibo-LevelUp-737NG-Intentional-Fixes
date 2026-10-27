@@ -1,6 +1,16 @@
 # Dry-test results
 
-Current source, 2026-10-18: **11/11 package, installer and focused behavior tests
+Version 0.1.3 passes the final 23-method suite under both Lua 5.4 and LuaJIT,
+all 576 FMS composition cases against released MTK 0.30.4/catalog 2.0.5,
+six full-script LuaJIT loads and 204 composed-output component-method executions.
+See [the current report](IMPLEMENTATION_0.1.3.md) for exact inputs and limits.
+These are offline source/package checks, not simulator acceptance.
+
+All results below apply to earlier source snapshots.
+
+## Historical result — 2026-10-18
+
+Source on 2026-10-18: **11/11 package, installer and focused behavior tests
 PASS**, including I30 and I37-I39. All six behavior methods also pass under
 LuaJIT. The standalone installed hash is verified by an executed lifecycle test.
 The MTK 0.29.4/catalog 2.0.2 FMS source-composition matrix is **576/576 PASS**.

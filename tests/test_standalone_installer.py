@@ -17,9 +17,9 @@ DEFAULT_BASELINE = Path(
     "B738X_XP12_4_05_35/plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua"
 )
 SOURCE_HASH = "ff313b0e88c62845ad1c4a2b1f4bd599f57d8799e8d6707bfc10a3369fd63a8e"
-# Expected bytes include the I30 repair and the three unreleased cruise fixes.
+# Expected bytes include the I02 repair and I40, alongside the existing fixes.
 # Installer lifecycle assertions and the verified clean-source hash stay intact.
-RESULT_HASH = "48e000794942a37ae661a80f52d2d099b4469528825e42871503e57ca2d2d444"
+RESULT_HASH = "233ec98c96cfd3c0ac171583882b1e6d39da83bdc9f4a7e4d190e1cc6e41f48f"
 RELATIVE_TARGET = Path("plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua")
 
 
@@ -44,15 +44,41 @@ class StandaloneInstallerTests(unittest.TestCase):
     def tearDown(self) -> None:
         self.temporary.cleanup()
 
-    def run_installer(self, action: str, expected: int = 0) -> subprocess.CompletedProcess[str]:
+    def run_installer(self, action: str, expected: int = 0, simulator_running: bool = False) -> subprocess.CompletedProcess[str]:
+        # Run the real CLI and ownership transaction on our disposable aircraft.
+        # Only process inventory is stubbed; never stop or write a live simulator.
+        bootstrap = r'''
+import pathlib, runpy, subprocess, sys, tempfile
+script, action, root, running = sys.argv[1:]
+fixture = pathlib.Path(root).resolve()
+assert fixture.is_relative_to(pathlib.Path(tempfile.gettempdir()).resolve())
+assert fixture.name == "aircraft" and fixture.parent.name.startswith("intentional-fixes-test-")
+sys.path.insert(0, str(pathlib.Path(script).parent))
+original_run = subprocess.run
+def fixture_run(command, *args, **kwargs):
+    if command in (["ps", "-A", "-o", "comm="], ["tasklist", "/FO", "CSV", "/NH"]):
+        return subprocess.CompletedProcess(command, 0, stdout="X-Plane\n" if running=="1" else "", stderr="")
+    return original_run(command, *args, **kwargs)
+subprocess.run = fixture_run
+sys.argv = [script, action, "--aircraft-root", root]
+runpy.run_path(script, run_name="__main__")
+'''
         completed = subprocess.run(
-            [sys.executable, str(INSTALLER), action, "--aircraft-root", str(self.aircraft)],
+            [sys.executable, "-c", bootstrap, str(INSTALLER), action, str(self.aircraft),
+             "1" if simulator_running else "0"],
             text=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
         self.assertEqual(completed.returncode, expected, completed.stdout + completed.stderr)
         return completed
+
+    def test_running_simulator_guard_rejects_fixture_install(self) -> None:
+        original = self.target.read_bytes()
+        result = self.run_installer("install", expected=1, simulator_running=True)
+        self.assertIn("Close X-Plane", result.stderr)
+        self.assertEqual(original, self.target.read_bytes())
+        self.assertFalse((self.aircraft / ".zibo-intentional-fixes-clean35/state.json").exists())
 
     def test_check_install_verify_repeat_and_uninstall(self) -> None:
         original = self.target.read_bytes()

@@ -234,6 +234,14 @@
       {
         "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
         "text": "-- FIX: extra step burn reduces arrival fuel; both terms are kilograms."
+      },
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- BEGIN CUSTOM I02 typed prescribed courses"
+      },
+      {
+        "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
+        "text": "-- BEGIN CUSTOM I40 VI source publication lifetime"
       }
     ],
     "resultFiles": [],

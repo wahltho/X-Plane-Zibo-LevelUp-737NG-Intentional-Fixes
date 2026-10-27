@@ -8,8 +8,8 @@ The I-numbers are reference IDs used in the patch files and technical notes.
 
 ## Available with either installer
 
-Version 0.1.2 contains 17 fixes for both installation methods, including the
-I30 repair and the three new fixes I37-I39.
+Version 0.1.3 contains 18 fix families for both installation
+methods, including the separate I02 repair and new I40.
 
 ### I01 — GLS, LPV and LP approach data
 
@@ -24,7 +24,10 @@ Some procedure courses use a `T` suffix for true north; others are stored in
 tenths of a degree. Incorrect scaling or repeated magnetic-variation
 corrections can make the FMC, ND and flown leg disagree. The fix reads the
 units and north reference consistently and converts the course once where
-needed.
+needed. The 0.1.3 repair removes an incorrect magnitude-based scaling rule in
+the earlier I02 patch: for example, `0140` means 14 degrees magnetic, while
+`036T` means 36 degrees true. The prescribed token remains unchanged.
+This is not a claim that every native TRUE-course or HOLD issue is resolved.
 
 ### I03 — Course and heading intercepts
 
@@ -40,6 +43,7 @@ correction. Holds could also show the wrong true/magnetic reference,
 misinterpret an exact altitude restriction, or become zero miles long when
 navdata omitted both time and distance. The fix corrects these cases and uses
 the existing default length when the published length is missing.
+Published time values such as `T010` are preserved as time values.
 
 ### I05 — Approach names and initial fixes
 
@@ -128,6 +132,22 @@ FMC speed modification remains editable, and the MCP controls work as before.
 The W/STEP fuel estimate could increase when a step used more fuel, or decrease
 when it saved fuel. The fix corrects the sign and converts the fuel difference
 consistently for KG and LBS display. It does not replace the step calculation.
+
+### I40 — VI heading handoff and ground LNAV arming
+
+A VI's prescribed heading can be lost when calculated track or later plugin
+feedback overwrites it. The fix preserves that heading independently of the
+available intercept geometry and refreshes its magnetic representation after
+geometry changes. It rejects route-geometry feedback after the corresponding
+active-route publication has been retired.
+
+On the ground, the first prescribed V-heading is compared with the actual
+departure runway direction within 5 degrees. Magnetic and true values are
+converted to the same reference. Missing runway data leaves this check
+unavailable. No route points or geometry-valid flags are invented.
+
+I40 is included with either installation method. Native handling of missing
+intercept geometry and complete resolution of the reported flight remain open.
 
 ## Applied by the Toolkit when the relevant module is selected
 

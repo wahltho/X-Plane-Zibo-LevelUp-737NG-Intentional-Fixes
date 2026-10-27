@@ -1,11 +1,14 @@
 # Standalone installation
 
+These instructions describe version 0.1.3. MTK catalog qualification is
+separate from publication of the MTK source archive.
+
 Use this installer only with an untouched original Zibo 4.05.35 Lua file.
 The same Lua file is used by LevelUp.
 
 If you already have CPDLC, LevelUp W&B, VNAV or another Lua patch installed,
 use the **X-Plane 737NG Maintenance Toolkit** instead. Select Intentional
-Fixes in the Zibo or LevelUp patch group once its catalog offers version 0.1.2.
+Fixes in the Zibo or LevelUp patch group once its catalog offers version 0.1.3.
 Toolkit 0.21.1 or newer is required by the package format; the MTK source ZIP
 does not itself qualify the package for catalog installation.
 
@@ -61,19 +64,18 @@ the standalone installer's backup.
 ## Updating an older standalone installation
 
 Use the older package's installer and its original backups to uninstall that
-version first. Do not use the 0.1.2 installer to remove an older installation,
+version first. Do not use the 0.1.3 installer to remove an older installation,
 and do not delete its receipt or backup directory. After successful removal,
-check and install 0.1.2 against the restored original .35 file. There is no
+check and install 0.1.3 against the restored original .35 file. There is no
 in-place upgrade or automatic adoption. If removal fails, ask on the wahltho
 Discord server before changing any files.
 
 ## Included fixes
 
-Version 0.1.2 includes 17 fixes: I01–I05, I07–I09, I16, I24,
-I27, I30, I34, I35 and I37–I39, including the I30 repair. The fix payloads pass
-installer, focused behavior and MTK FMS-combination checks. This is not simulator
-acceptance or MTK catalog qualification; see the
-[current results](DRY_TEST_RESULTS_2026_10_18.txt).
+Version 0.1.3 includes 18 fix families: I01–I05, I07–I09, I16, I24,
+I27, I30, I34, I35 and I37–I40, including the I02 repair. See its
+[test report](IMPLEMENTATION_0.1.3.md) for automatic checks and their limits;
+simulator acceptance and MTK catalog qualification remain separate.
 See the [fix catalog](FIX_CATALOG.md) for descriptions.
 
 It does not include the CPDLC or LevelUp W&B fixes. I29 needs no patch because
@@ -110,7 +112,7 @@ support before changing those files.
 
 Older standalone installs without a complete receipt are not automatically
 migrated. Remove them using the installer and original backups that created
-them. The ownership checks do not adopt those installations. The I30 and
-I37-I39 changes have installer and focused behavior tests, not simulator
+them. The ownership checks do not adopt those installations. The I02, I30 and
+I37–I40 changes have installer and focused behavior tests, not simulator
 acceptance or a full MTK recovery replay. See the
-[current results](DRY_TEST_RESULTS_2026_10_18.txt).
+[test report](IMPLEMENTATION_0.1.3.md).

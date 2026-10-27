@@ -2,7 +2,7 @@
   "format": "exact-text-replacements-v1",
   "replacements": [
     {
-      "name": "I30 committed-constraint release helper",
+      "name": "I30 committed-constraint release helper; I40 co-owned lifetime boundary",
       "oldLines": [
         "function B738_autopilot_alt_interv_CMDhandler(phase, duration)"
       ],
@@ -34,9 +34,21 @@
         "\t\t\t\tlocal old5 = legs_data[n][5]",
         "\t\t\t\tlocal old6 = legs_data[n][6]",
         "\t\t\t\tlocal old41 = legs_data[n][41]",
-        "\t\t\t\tlegs_data[n][5] = 0",
-        "\t\t\t\tlegs_data[n][6] = 0",
-        "\t\t\t\tlegs_data[n][41] = 0",
+        "\t\t\t\tdo -- FIX: retire native packet before actual ACT mutation",
+        "\t\t\t\t\tlocal ifix_value = 0",
+        "\t\t\t\t\tif legs_data[n][5] ~= ifix_value then B738_ifix_vi.retire() end",
+        "\t\t\t\t\tlegs_data[n][5] = ifix_value",
+        "\t\t\t\tend",
+        "\t\t\t\tdo -- FIX: retire native packet before actual ACT mutation",
+        "\t\t\t\t\tlocal ifix_value = 0",
+        "\t\t\t\t\tif legs_data[n][6] ~= ifix_value then B738_ifix_vi.retire() end",
+        "\t\t\t\t\tlegs_data[n][6] = ifix_value",
+        "\t\t\t\tend",
+        "\t\t\t\tdo -- FIX: retire native packet before actual ACT mutation",
+        "\t\t\t\t\tlocal ifix_value = 0",
+        "\t\t\t\t\tif legs_data[n][41] ~= ifix_value then B738_ifix_vi.retire() end",
+        "\t\t\t\t\tlegs_data[n][41] = ifix_value",
+        "\t\t\t\tend",
         "\t\t\t\tif n <= legs_num2 and (legs_delete == 0 or (legs_data2[n][5] == old5 and legs_data2[n][6] == old6 and legs_data2[n][41] == old41)) then",
         "\t\t\t\t\tlegs_data2[n][5] = 0",
         "\t\t\t\t\tlegs_data2[n][6] = 0",

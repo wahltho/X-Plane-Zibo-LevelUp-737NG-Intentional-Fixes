@@ -12,9 +12,9 @@ var root = Path.GetFullPath(args.Single());
 string Hash(byte[] b) => Convert.ToHexString(SHA256.HashData(b)).ToLowerInvariant();
 void Require(bool ok, string message) { if (!ok) throw new Exception(message); }
 Require(Hash(File.ReadAllBytes(typeof(ContentPackageCatalog).Assembly.Location)) ==
-    "391bfcb9ba7437943a1541fb722bb260bd3c6fdd1d356130e96e8a75a9d15b6d", "Unmodified released Core required");
-Require(typeof(ContentPackageCatalog).Assembly.GetName().Version == new Version(0,29,4,0), "Core version");
-var catalog = ContentPackageCatalog.Parse(File.ReadAllText(Path.Combine(root,"content-package-catalog.json")),new Version(0,29,4));
+    "87963231bf1c1565aaeb06d3bd1eb08f5462023c907713b8db5546d8fa48629d", "Unmodified released Core required");
+Require(typeof(ContentPackageCatalog).Assembly.GetName().Version == new Version(0,30,4,0), "Core version");
+var catalog = ContentPackageCatalog.Parse(File.ReadAllText(Path.Combine(root,"content-package-catalog.json")),new Version(0,30,4));
 var package = CompatibilityPackageLoader.LoadDirectory(Path.Combine(root,"candidate-package"));
 Require(package.Manifest.SchemaVersion == 5, "Candidate parser schema");
 using var input = JsonDocument.Parse(File.ReadAllBytes(Path.Combine(root,"matrix-input.json")));
@@ -46,7 +46,7 @@ foreach(var product in new[]{"zibo-737ng","levelup-737ng"}) {
             }
             try {
                 var composed = Compose(baseline);
-                // MTK 0.29.4 rebuilds managed shared files from the verified
+                // MTK 0.30.4 rebuilds managed shared files from the verified
                 // original backup. It does not rerun earlier module payloads
                 // over blocks intentionally refined by a later module (I33).
                 Require(composed.SequenceEqual(Compose(baseline)),"Repeated clean-baseline composition differs");
@@ -68,7 +68,7 @@ foreach(var product in new[]{"zibo-737ng","levelup-737ng"}) {
                 var text = Encoding.UTF8.GetString(composed);
                 Require(text.StartsWith("\ufeff",StringComparison.Ordinal) == (style == "crlf-bom"),"BOM preservation");
                 Require(style == "lf" ? !text.Contains("\r") : !text.Replace("\r\n","").Contains('\n'),"Line-ending preservation");
-                foreach(var marker in new[]{"passed waypoint restriction cannot become", "displayed CRZ /MCP target belongs", "extra step burn reduces arrival fuel"})
+                foreach(var marker in new[]{"passed waypoint restriction cannot become", "displayed CRZ /MCP target belongs", "extra step burn reduces arrival fuel", "BEGIN CUSTOM I40 VI source publication lifetime"})
                     Require(text.Contains(marker),"Missing new payload: "+marker);
                 var path = Path.Combine(output,id+".lua"); File.WriteAllBytes(path,composed);
                 var start = new ProcessStartInfo("luac") { RedirectStandardOutput=true,RedirectStandardError=true };
@@ -97,7 +97,7 @@ var planner = new CompatibilityPackagePlanBuilder(new ToolStateStore(Path.Combin
 var plan = await planner.BuildAsync(ContentPatchAction.Install,variant,package,["intentional-fixes-zibo"]);
 Require(!plan.IsSafe && plan.StatusMessage.Contains("catalog group"),"Unreleased source unexpectedly admitted as a catalog-qualified release");
 File.WriteAllText(Path.Combine(root,"matrix-results.json"),JsonSerializer.Serialize(new {
-    core="0.29.4",catalog="2.0.2",results,failures,
+    core="0.30.4",catalog="2.0.5",results,failures,
     provenanceNegativeControl=plan.StatusMessage,
     repeatContract="Recompose selected pipeline from the frozen original, as managed MTK does; all-selected IF self-reapplication also byte-identical. Direct whole-pipeline reapplication rejects I33-refined W&B and is not the MTK managed-repeat contract.",
     limitation="Actual released FMS patch handlers; not full-aircraft install/rollback or catalog qualification."

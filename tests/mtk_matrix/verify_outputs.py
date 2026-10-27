@@ -7,6 +7,7 @@ No new interpretation of the aircraft logic; fixtures remain offline.
 import hashlib
 import json
 import os
+import re
 from pathlib import Path
 import subprocess
 import sys
@@ -38,7 +39,10 @@ for fixture in fixtures:
         command = [sys.executable, "-m", "unittest", "discover", "-s", "tests", "-p", "*payloads.py", "-v"]
         run = subprocess.run(command, cwd=ROOT, env=environment, capture_output=True, text=True)
         (OUTPUT / (fixture.stem + "-" + runtime + ".log")).write_text(run.stdout + run.stderr)
-        results.append({"fixture": fixture.stem, "runtime": runtime, "exitCode": run.returncode})
+        count = re.search(r"Ran (\d+) tests? in ", run.stderr)
+        assert count, run.stdout + run.stderr
+        results.append({"fixture": fixture.stem, "runtime": runtime, "exitCode": run.returncode,
+                        "methods": int(count.group(1))})
         print(f"{fixture.stem} / {runtime}: {'PASS' if run.returncode == 0 else 'FAIL'}", flush=True)
         assert run.returncode == 0, run.stdout + run.stderr
 for relative, expected in pins["candidateFiles"].items():
@@ -46,7 +50,8 @@ for relative, expected in pins["candidateFiles"].items():
 test_pins = {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
              for p in sorted((ROOT / "tests").rglob("*")) if p.suffix in (".py", ".cs", ".csproj")}
 (OUTPUT / "behavior-results.json").write_text(json.dumps({
-    "results": results, "methodsPerRun": 6, "fullScriptLuaJitLoads": len(fixtures),
+    "results": results, "methodExecutions": sum(r["methods"] for r in results),
+    "fullScriptLuaJitLoads": len(fixtures),
     "productionInputPinsUnchanged": True, "testPins": test_pins,
     "limitation": "Stubbed component execution, not a simulator or full-aircraft integration replay"
 }, indent=2) + "\n")

@@ -18,6 +18,7 @@ The standalone installer accepts only the untouched original Zibo 4.05.35 Lua:
 | Published 0.1.0 standalone result | `49a6ab1f077bca893123f476873ec5e7c9af1d18e31570996a697403ae2c3f70` |
 | Historical intermediate I30-only result (not released) | `01bf0a2c2cd873c8880cafed4e3925412afb26c02b4ded57b1e4f46d0e1299de` |
 | Version 0.1.2 standalone result (I30 + I37-I39) | `48e000794942a37ae661a80f52d2d099b4469528825e42871503e57ca2d2d444` |
+| Version 0.1.3 standalone result (I02 repair + I40) | `233ec98c96cfd3c0ac171583882b1e6d39da83bdc9f4a7e4d190e1cc6e41f48f` |
 
 The two input files were byte-identical when checked. The LevelUp product
 version is not a separate Lua baseline for this release.
@@ -33,7 +34,9 @@ unchanged original binary.
 [PATCH_MATRIX.md](PATCH_MATRIX.md) records the technical status.
 `package-plan.json` defines application order and module requirements.
 
-I02 and I03 share a patch file. The current 17 unconditional fixes use 16 patch files.
+I02 and I03 share a patch file. The 0.1.3 release’s 18 unconditional families
+use 17 patch files. Authoring helpers under `src/` are inserted into the
+existing FMS module; they are not separately installed XLua scripts.
 I06 applies after CPDLC 1.2; I33 applies after LevelUp W&B 0.5.3.
 I14 is already included in CPDLC 1.2, and I29 is already handled by the original
 .35 Lua. Neither needs an additional patch. The standalone installer includes
@@ -50,7 +53,7 @@ for the original blocks, port evidence, existing MTK hooks and open test gates.
 
 ## MTK package
 
-The separate 0.1.2 MTK archive can be generated with:
+The separate MTK archive can be generated with:
 
 ```text
 python3 tools/build_mtk_package.py --check --archive <output.zip>
@@ -60,11 +63,18 @@ It uses schema 5 and requires Toolkit 0.21.1 or newer. The Zibo module excludes
 I33. The LevelUp module applies I33 only when Weight & Balance is selected.
 Both modules apply I06 only when CPDLC is selected.
 
-This archive is separate from the standalone 0.1.2 installer and contains no
+This archive is separate from the standalone installer and contains no
 complete aircraft Lua file. It must be qualified and offered by the MTK catalog
 before managed installation; archive publication does not update that catalog.
 
 ## Checks performed
+
+The 0.1.3 source and test report is
+[IMPLEMENTATION_0.1.3.md](IMPLEMENTATION_0.1.3.md). The 0.1.2 results below
+are historical; the 0.1.3 report records the new final-source runs. The .35 binary evidence
+used to bound I40 is from the original Linux build; the .31 reconstruction
+does not prove .35 behavior on every platform. Native non-VI TRUE/HOLD
+coherence and the reported flight's complete resolution remain open.
 
 Version 0.1.2 includes the I30 boundary correction and I37-I39 additions.
 The 11-method package, installer and focused behavior suite passes, including

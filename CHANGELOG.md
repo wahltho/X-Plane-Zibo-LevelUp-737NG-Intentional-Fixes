@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.1.3 — 2026-10-27
+
+- Repair I02 course decoding: read magnetic values as tenths and `dddT` as
+  whole degrees true. Keep the original course token unchanged and use the
+  appropriate start point for conversion. Preserve I03 intercept lookahead.
+- Preserve published HOLD time tokens such as `T010` when applying I04 defaults.
+- Add I40: keep a VI's prescribed heading separate from calculated track;
+  correct both native VI course operands after geometry feedback; reject
+  feedback for a retired active-route publication.
+- Ground LNAV arming compares the first prescribed V-heading with the actual
+  departure runway direction within 5 degrees, using a common north reference.
+- Include the same repair and I40 in standalone and MTK source definitions:
+  22 catalog items, 20 Lua-delta families, 19 payload documents; standalone
+  18 families in 17 payload documents. No new aircraft pages or options.
+- This release does not establish resolution of the reported LGSK flight.
+  Native non-VI TRUE/HOLD coherence remains outside the Lua repair.
+
 ## 0.1.2 — 2026-10-18
 
 - Fix the I30 replacement boundary: ALT INTV constraint deletion is no longer

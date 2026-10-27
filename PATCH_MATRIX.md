@@ -1,4 +1,4 @@
-# Patch coverage — version 0.1.2
+# Patch coverage — 0.1.3
 
 See `FIX_CATALOG.md` for the user-facing symptom and corrected-behavior
 description of every family.
@@ -15,7 +15,7 @@ Status vocabulary:
 | Family | Scope | Status |
 |---|---|---|
 | I01 | GLS/LP record parsing, best match and LP vertical suppression | source-ready |
-| I02 | TRUE/MAG course parse and single conversion | source-ready: shared I02/I03 owner payload |
+| I02 | Declared MAG tenths/TRUE whole degrees, start-datum projection, unchanged raw token | repaired; automatic checks PASS; shared I02/I03 owner payload |
 | I03 | CI/VI stale/same-fix lookahead exclusion | source-ready: shared I02/I03 owner payload |
 | I04 | Hold course, missing time/distance and dual-zero altitude semantics | source-ready |
 | I05 | APP suffix/Ref-ICAO normalization and IF-preserving merge | source-ready |
@@ -35,6 +35,16 @@ Status vocabulary:
 | I37 | Passed waypoint exclusion in secondary CRZ speed scan | included in 0.1.2; focused behavior and FMS composition PASS |
 | I38 | Both FMC CRZ LSK2 handlers reject edits to a displayed MCP target | included in 0.1.2; focused behavior and FMS composition PASS |
 | I39 | W/STEP arrival-fuel sign and display-unit conversion | included in 0.1.2; focused behavior and FMS composition PASS |
+| I40 | VI prescribed heading, native feedback/publication lifetime, ground V-heading arming within 5 degrees | source/package checks PASS; native non-VI TRUE/HOLD and full flight resolution remain open |
+
+Version 0.1.3 contains 22 catalog families, 20 with Lua changes in 19
+payload documents. Standalone includes 18 families in 17 payload documents.
+I02 remains a separate repair from I40. Where their exact installed signatures
+share a Lua block, that block includes both changes to preserve reapplication.
+I30's only additional change is I40's active-route retirement guard around its
+existing writes. See [the test report](IMPLEMENTATION_0.1.3.md).
+
+## Historical 0.1.2 results
 
 The first release contained 18 fix families in 15 payload documents. The
 0.1.2 release adds I37-I39: 21 families, 19 with a Lua delta in 18 payload

@@ -1,7 +1,7 @@
 """Pin published companion sources; prepare only disposable FMS test inputs.
 
 Usage: python3 tests/mtk_matrix/prepare.py <existing-evidence-directory>
-Requires the downloaded Core 0.29.4 and catalog 2.0.2 in that directory.
+Requires the downloaded Core 0.30.4 and catalog 2.0.5 in that directory.
 Does not produce a release archive or modify another repository/installation.
 """
 
@@ -29,11 +29,11 @@ def write_json(path, value):
 
 
 catalog_bytes = (OUTPUT / "content-package-catalog.json").read_bytes()
-assert sha(catalog_bytes) == "f1e974bc9fee1295451438766566e036e4e214aed58706f88047e0decfa0dfa9"
+assert sha(catalog_bytes) == "8366ced00f1903457bdb507ed247d16e4fcc47523637c9a2992e4799773ffe99"
 core = OUTPUT / "LevelUp.NavTableUpdater.Core.dll"
-assert sha(core.read_bytes()) == "391bfcb9ba7437943a1541fb722bb260bd3c6fdd1d356130e96e8a75a9d15b6d"
+assert sha(core.read_bytes()) == "87963231bf1c1565aaeb06d3bd1eb08f5462023c907713b8db5546d8fa48629d"
 archive = OUTPUT / "XPlane737NGMaintenanceToolkit-stable-osx-arm64-Portable.zip"
-assert sha(archive.read_bytes()) == "33bd968190bb7e41ba7a6ac37e62edba433cd5d944528e24ecef2fdf198cc88d"
+assert sha(archive.read_bytes()) == "64771a7f9a9a4b457aebdee3a086671c5e057b705f318e303a9b72e04c1a1c6d"
 with zipfile.ZipFile(archive) as released:
     member, = [p for p in released.namelist() if p.endswith("/LevelUp.NavTableUpdater.Core.dll")]
     assert released.read(member) == core.read_bytes()
@@ -41,7 +41,7 @@ original = BASELINE.read_bytes()
 assert sha(original) == "ff313b0e88c62845ad1c4a2b1f4bd599f57d8799e8d6707bfc10a3369fd63a8e"
 (OUTPUT / "original.lua").write_bytes(original)
 catalog = json.loads(catalog_bytes)
-assert catalog["catalogVersion"] == "2.0.2"
+assert catalog["catalogVersion"] == "2.0.5"
 artifacts = catalog["aircraftCompatibility"]["artifacts"]
 groups = [p for p in catalog["packages"] if p["distribution"]["kind"] == "catalogGroup"]
 modules = []; pins = []; empty = []; cache = {}

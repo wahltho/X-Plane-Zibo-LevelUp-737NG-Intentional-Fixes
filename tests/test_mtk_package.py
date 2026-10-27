@@ -19,19 +19,19 @@ class MtkPackageTests(unittest.TestCase):
     def test_schema5_contract_and_payloads(self) -> None:
         manifest = json.loads((ROOT / "package-manifest.json").read_text(encoding="utf-8"))
         self.assertEqual(5, manifest["schemaVersion"])
-        self.assertEqual("0.1.2", manifest["packageVersion"])
+        self.assertEqual("0.1.3", manifest["packageVersion"])
         self.assertEqual(["zibo-737ng", "levelup-737ng"], manifest["supportedProducts"])
         self.assertEqual(
             ["intentional-fixes-zibo", "intentional-fixes-levelup"],
             [module["moduleId"] for module in manifest["modules"]],
         )
-        for module, expected_count in zip(manifest["modules"], (17, 18), strict=True):
+        for module, expected_count in zip(manifest["modules"], (18, 19), strict=True):
             self.assertEqual("optional", module["policy"])
             self.assertFalse(module["defaultEnabled"])
             self.assertEqual(expected_count, len(module["targets"]))
             self.assertEqual(expected_count, len(module["payloads"]))
             self.assertEqual({TARGET}, {target["relativePath"] for target in module["targets"]})
-            for prefix in ("i37-", "i38-", "i39-"):
+            for prefix in ("i37-", "i38-", "i39-", "i40-"):
                 added = [target for target in module["targets"] if target["payload"].startswith(prefix)]
                 self.assertEqual(1, len(added))
                 self.assertNotIn("whenModulesSelected", added[0])
@@ -54,7 +54,7 @@ class MtkPackageTests(unittest.TestCase):
 
     def test_archive_is_deterministic_and_complete(self) -> None:
         with tempfile.TemporaryDirectory(prefix="intentional-mtk-package-") as folder:
-            archive = Path(folder) / "X-Plane-Zibo-LevelUp-737NG-Intentional-Fixes-MTK-v0.1.2.zip"
+            archive = Path(folder) / "X-Plane-Zibo-LevelUp-737NG-Intentional-Fixes-MTK-v0.1.3.zip"
             command = [sys.executable, str(BUILDER), "--check", "--archive", str(archive)]
             subprocess.run(command, cwd=ROOT, check=True, capture_output=True)
             first = archive.read_bytes()
@@ -68,7 +68,7 @@ class MtkPackageTests(unittest.TestCase):
                         self.assertEqual(
                             payload["sha256"], hashlib.sha256(package.read(name)).hexdigest()
                         )
-                self.assertEqual(36, len(package.namelist()))
+                self.assertEqual(38, len(package.namelist()))
 
 
 if __name__ == "__main__":

@@ -30,7 +30,12 @@ class AltInterventionPayloadTests(unittest.TestCase):
         name = "B738_autopilot_alt_interv_CMDhandler"
         start = source.index("local function B738_alt_intv_release_next_constraint(")
         end = source.index("\nfunction ", source.index("function " + name + "(") + 1)
-        return source[start:end] + "\n"
+        prefix=""
+        marker="-- BEGIN CUSTOM I40 VI source publication lifetime"
+        if marker in source:
+            a=source.index(marker); b=source.index("-- END CUSTOM I40 VI source publication lifetime",a)
+            prefix=source[a:b]+"\n"
+        return prefix + source[start:end] + "\n"
 
     PRELUDE = r'''
 function B738_calc_vnav_spd() end
