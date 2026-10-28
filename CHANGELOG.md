@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.4 — 2026-10-28
+
+- Fix an I40 startup-order error: wait for the native LNAV command before
+  registering its wrapper, retrying from lifecycle callbacks if needed.
+- Prevent duplicate registration and stop command lookups after success.
+- Preserve existing fix behavior, module selection and installation ownership.
+- Verify Zibo/LevelUp composition and offline startup with companion patches,
+  including delayed and unavailable commands. Simulator validation remains open.
+
 ## 0.1.3 — 2026-10-27
 
 - Repair I02 course decoding: read magnetic values as tenths and `dddT` as

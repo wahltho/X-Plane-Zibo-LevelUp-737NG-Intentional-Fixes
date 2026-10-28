@@ -41,7 +41,14 @@ function lnav_prior()
     if delta <= 5 then B738DR_lnav_prior_arm = 1 end
 end
 
--- FIX: refresh before the unchanged native command consumes the directional gate.
-wrap_command("laminar/B738/autopilot/lnav_press",
-    function(phase, duration) if phase == 0 then lnav_prior() end end,
-    function(phase, duration) end)
+-- Native commands may not exist while XLua first loads this script.
+-- Retry from lifecycle callbacks, and stop looking once the wrapper is installed.
+function B738_ifix_vi.ensure_lnav_wrapper()
+    if B738_ifix_vi.lnav_wrapped then return end
+    local lookup = XLuaFindCommand or XPLMFindCommand
+    if type(lookup) ~= "function" or not lookup("laminar/B738/autopilot/lnav_press") then return end
+    wrap_command("laminar/B738/autopilot/lnav_press",
+        function(phase, duration) if phase == 0 then lnav_prior() end end,
+        function(phase, duration) end)
+    B738_ifix_vi.lnav_wrapped = true
+end

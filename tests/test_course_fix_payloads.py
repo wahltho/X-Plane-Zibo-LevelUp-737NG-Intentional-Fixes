@@ -235,11 +235,13 @@ packet(2,40); B738_read_calc_data(); near(legs_data[2][18],9); near(legs_data[2]
 ''')
 
     def test_ground_first_leg_boundary_and_phase_zero_refresh(self):
-        ground=base.function_text(self.source,'lnav_prior')
-        self.run_lua(self.PRELUDE+asset(self.source,'course')+r'''
+        ground=base.function_text(self.source,'lnav_prior')+'\n'+base.function_text(self.source,'B738_ifix_vi.ensure_lnav_wrapper')
+        self.run_lua(self.PRELUDE+asset(self.source,'course')+asset(self.source,'vi')+r'''
 function wrap_command(name,before,after) assert(name=="laminar/B738/autopilot/lnav_press"); before_lnav=before end
+function XLuaFindCommand(name) return name end
 function find_ref_rnw_data(mode,rte) assert(mode==0 and rte==0); ref_runway_lenght=1000; ref_runway_crs=0; ref_runway_old_name="01" end
 '''+ground+r'''
+B738_ifix_vi.ensure_lnav_wrapper()
 reset_route("VI","0360"); legs_num=3; offset=2; ref_icao="LGSK"; ref_rwy="01 "
 legs_data={row("TF","",0,20),row("TF","",0,20),row("VI","0000",0,0),row("TF","",0,0)}
 legs_data[1][1]="LGSK"; legs_data[2][1]="RW01"
@@ -264,6 +266,33 @@ legs_data[3][31]="TF"; legs_data[3][2]=math.rad(8); legs_data[4][31]="VI"; legs_
 lnav_prior(); assert(B738DR_lnav_prior_arm==0,"skipped literal first leg")
 legs_data[3][31]="VI"; legs_data[3][29]="0000"; rnw_data[1][5]=0
 lnav_prior(); assert(B738DR_lnav_prior_arm==0,"invented runway geometry")
+''')
+
+    def test_command_registration_waits_and_runs_once(self):
+        ensure=base.function_text(self.source,'B738_ifix_vi.ensure_lnav_wrapper')
+        self.run_lua(asset(self.source,'course')+asset(self.source,'vi')+r'''
+local available=false
+local wraps, queries, refreshes=0,0,0
+function XLuaFindCommand(name) queries=queries+1; return available and name or nil end
+function lnav_prior() refreshes=refreshes+1 end
+function wrap_command(name,before,after)
+ assert(available); wraps=wraps+1; before_lnav=before; after_lnav=after
+end
+'''+ensure+r'''
+for i=1,5 do B738_ifix_vi.ensure_lnav_wrapper() end
+assert(wraps==0 and queries==5)
+available=true; B738_ifix_vi.ensure_lnav_wrapper()
+assert(wraps==1 and queries==6)
+for i=1,10 do B738_ifix_vi.ensure_lnav_wrapper() end
+assert(wraps==1 and queries==6)
+before_lnav(1,0); before_lnav(2,0); after_lnav(0,0); assert(refreshes==0)
+before_lnav(0,0); assert(refreshes==1)
+-- Alternate lookup API, and genuine registration errors are not swallowed/latching success.
+B738_ifix_vi.lnav_wrapped=false
+XPLMFindCommand=XLuaFindCommand; XLuaFindCommand=nil
+function wrap_command(...) error("registration failed") end
+local ok,err=pcall(B738_ifix_vi.ensure_lnav_wrapper)
+assert(not ok and err:find("registration failed",1,true)); assert(not B738_ifix_vi.lnav_wrapped)
 ''')
 
     def test_exact_payload_reapplication_and_wiring(self):

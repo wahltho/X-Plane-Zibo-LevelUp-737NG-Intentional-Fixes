@@ -5,10 +5,10 @@ also used by LevelUp. It covers procedure courses, holds, approach reference
 data, N1 mode changes, go-around detection and VNAV descent behavior. The full
 list is in the [fix catalog](FIX_CATALOG.md).
 
-Version **0.1.3** repairs the I02 course-decoding regression and adds I40 for VI heading handoff and ground
-LNAV arming. The reported LGSK departure problem remains under investigation;
-the complete flight has not been verified. See the
-[release notes](RELEASE_NOTES_0.1.3.md).
+Version **0.1.4** fixes a startup-order error introduced in 0.1.3. If the native
+LNAV command was not ready when the FMS script loaded, the script could stop
+loading. Registration now waits until the command is available. See the
+[release notes](RELEASE_NOTES_0.1.4.md).
 
 **This is an unofficial patch.** It is not affiliated with, endorsed by, or
 supported by Zibo, LevelUp or Laminar Research. For help, use the
@@ -19,22 +19,24 @@ aircraft support channels.
 
 Use the **X-Plane 737NG Maintenance Toolkit** to install Intentional Fixes
 alongside other patches. Select it in the Zibo or LevelUp patch group. Toolkit
-0.21.1 or newer is required by the package format. Each version must also be
-qualified and offered by the Toolkit catalog before it can be installed there;
-publishing the MTK ZIP alone does not update the catalog. The Toolkit applies
+0.31.0 or newer follows compatible patch releases without a separate catalog
+update for each patch version. Update MTK through its built-in updater first
+if needed, then check the selected aircraft's patches. Older Toolkit versions
+can remain restricted to the versions explicitly approved in their catalog.
+The Toolkit applies
 earlier functional patches before Intentional Fixes; Lua Timer follows afterwards. The CPDLC and LevelUp
 W&B fixes are applied only when those modules are selected.
 
 The **standalone installer** is for an untouched original .35 Lua file only.
-Version 0.1.3 includes 18 fix families.
+Version 0.1.4 includes 18 fix families.
 It rejects files changed by other Lua patches. See the
 [installation instructions](INSTALLATION.md). If you have already used the
 standalone installer, uninstall it before switching to Toolkit management.
 
-Downloads for version 0.1.3:
+Downloads for version 0.1.4:
 
-- [Standalone installer](https://github.com/wahltho/X-Plane-Zibo-LevelUp-737NG-Intentional-Fixes/releases/download/v0.1.3/X-Plane-Zibo-LevelUp-737NG-Intentional-Fixes-v0.1.3.zip)
-- [MTK source package](https://github.com/wahltho/X-Plane-Zibo-LevelUp-737NG-Intentional-Fixes/releases/download/v0.1.3/X-Plane-Zibo-LevelUp-737NG-Intentional-Fixes-MTK-v0.1.3.zip) for catalog integration, not standalone installation.
+- [Standalone installer](https://github.com/wahltho/X-Plane-Zibo-LevelUp-737NG-Intentional-Fixes/releases/download/v0.1.4/X-Plane-Zibo-LevelUp-737NG-Intentional-Fixes-v0.1.4.zip)
+- [MTK source package](https://github.com/wahltho/X-Plane-Zibo-LevelUp-737NG-Intentional-Fixes/releases/download/v0.1.4/X-Plane-Zibo-LevelUp-737NG-Intentional-Fixes-MTK-v0.1.4.zip) for catalog integration, not standalone installation.
 
 To update an older standalone installation, uninstall it with its original
 installer first. Keep its backups until removal succeeds. A new version must
@@ -53,13 +55,12 @@ CPDLC 1.2 or the original .35 Lua and need no further change.
 
 ## Testing and support
 
-The 23-method suite passes under Lua 5.4 and LuaJIT. All 576 FMS combinations
-against released MTK 0.30.4/catalog 2.0.5 pass, as do 204 component-method
-executions on the fully combined outputs. Details are recorded in the
-[implementation and test report](IMPLEMENTATION_0.1.3.md). Earlier results
-remain in [the historical test record](DRY_TEST_RESULTS.md). Full-aircraft MTK
-installation/recovery, release qualification and simulator acceptance remain
-separate checks.
+The startup fix passes 51 focused FMS composition cases and 56 offline startup
+cases for Zibo and LevelUp, including a delayed or missing LNAV command and
+combined FMS patches. The existing regression suite also passes. These are
+source and lifecycle tests, not simulator or flight validation. See the
+[startup regression report](STARTUP_REGRESSION_2026_10_28.md). Historical 0.1.3
+results remain in [the implementation report](IMPLEMENTATION_0.1.3.md).
 
 Close X-Plane before installing and keep your own aircraft backup. If you run
 into a problem, report it on the [wahltho Discord server](https://discord.gg/ySS88PMuyC).

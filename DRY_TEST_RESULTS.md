@@ -1,3 +1,9 @@
+# Current startup repair — 0.1.4
+
+See [STARTUP_REGRESSION_2026_10_28.md](STARTUP_REGRESSION_2026_10_28.md) for the
+startup repair, 51 composition cases, 56 load-start cases and test limitations.
+The 0.1.3 results below are historical.
+
 # Dry-test results
 
 Version 0.1.3 passes the final 23-method suite under both Lua 5.4 and LuaJIT,

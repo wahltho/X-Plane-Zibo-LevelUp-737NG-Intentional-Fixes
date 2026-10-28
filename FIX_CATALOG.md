@@ -8,7 +8,7 @@ The I-numbers are reference IDs used in the patch files and technical notes.
 
 ## Available with either installer
 
-Version 0.1.3 contains 18 fix families for both installation
+Version 0.1.4 contains 18 fix families for both installation
 methods, including the separate I02 repair and new I40.
 
 ### I01 — GLS, LPV and LP approach data

@@ -386,12 +386,12 @@ def vi_surfaces(text):
     text=edit_function(text,'lnav_prior',lambda _:(ROOT/'src/ground_lnav.lua').read_text()+'\n')
     # Function-entry ordinary refresh is read-only: it never clears a geometry packet.
     def callback(s):
-        s=once(s,'function after_physics()', 'function after_physics()\n\tlnav_prior() -- FIX: coherent ACT even while MOD is busy')
+        s=once(s,'function after_physics()', 'function after_physics()\n\tB738_ifix_vi.ensure_lnav_wrapper() -- FIX: native command may become available after script load\n\tlnav_prior() -- FIX: coherent ACT even while MOD is busy')
         s=s.replace('\t\tlnav_prior()','\t\t-- FIX: refreshed at callback entry and before LNAV press')
         return once(s,'\t\tB738DR_fms_test1 = 103', '\t\tB738_ifix_vi.commit() -- FIX: only an actual completed ACTIVE export\n\t\tB738DR_fms_test1 = 103')
     text=edit_function(text,'after_physics',callback)
     text=edit_function(text,'flight_start',lambda s:once(s,'\tsimDR_latitude = simDR_latitude0',
-        '\tB738_ifix_vi.retire() -- FIX: private lifecycle retirement\n\tsimDR_latitude = simDR_latitude0'))
+        '\tB738_ifix_vi.retire() -- FIX: private lifecycle retirement\n\tB738_ifix_vi.ensure_lnav_wrapper() -- FIX: register only after the native command exists\n\tsimDR_latitude = simDR_latitude0'))
     for name in ['B738_init2','B738_init3','B738_init4','aircraft_unload']:
         text=edit_function(text,name,lambda s:s.replace(s.split('\n',1)[0],s.split('\n',1)[0]+'\n\tB738_ifix_vi.retire() -- FIX: private lifecycle retirement',1))
     return mutation_hooks(text)

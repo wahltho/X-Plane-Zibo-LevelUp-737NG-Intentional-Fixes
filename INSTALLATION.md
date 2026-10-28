@@ -1,16 +1,16 @@
 # Standalone installation
 
-These instructions describe version 0.1.3. MTK catalog qualification is
-separate from publication of the MTK source archive.
+These instructions describe version 0.1.4. Use MTK 0.31.0 or newer to follow
+compatible patch releases automatically.
 
 Use this installer only with an untouched original Zibo 4.05.35 Lua file.
 The same Lua file is used by LevelUp.
 
 If you already have CPDLC, LevelUp W&B, VNAV or another Lua patch installed,
 use the **X-Plane 737NG Maintenance Toolkit** instead. Select Intentional
-Fixes in the Zibo or LevelUp patch group once its catalog offers version 0.1.3.
-Toolkit 0.21.1 or newer is required by the package format; the MTK source ZIP
-does not itself qualify the package for catalog installation.
+Fixes in the Zibo or LevelUp patch group. Close X-Plane, check for patch updates
+and apply the reviewed selection. Keep your existing selected patches. Older
+Toolkit versions may require a catalog update; use the built-in MTK updater first.
 
 This installer is unofficial and is not supported by Zibo, LevelUp or
 Laminar Research. For help, use the
@@ -64,15 +64,15 @@ the standalone installer's backup.
 ## Updating an older standalone installation
 
 Use the older package's installer and its original backups to uninstall that
-version first. Do not use the 0.1.3 installer to remove an older installation,
+version first. Do not use the 0.1.4 installer to remove an older installation,
 and do not delete its receipt or backup directory. After successful removal,
-check and install 0.1.3 against the restored original .35 file. There is no
+check and install 0.1.4 against the restored original .35 file. There is no
 in-place upgrade or automatic adoption. If removal fails, ask on the wahltho
 Discord server before changing any files.
 
 ## Included fixes
 
-Version 0.1.3 includes 18 fix families: I01–I05, I07–I09, I16, I24,
+Version 0.1.4 includes 18 fix families: I01–I05, I07–I09, I16, I24,
 I27, I30, I34, I35 and I37–I40, including the I02 repair. See its
 [test report](IMPLEMENTATION_0.1.3.md) for automatic checks and their limits;
 simulator acceptance and MTK catalog qualification remain separate.

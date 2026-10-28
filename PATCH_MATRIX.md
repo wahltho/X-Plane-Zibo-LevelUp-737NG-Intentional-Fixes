@@ -1,4 +1,4 @@
-# Patch coverage — 0.1.3
+# Patch coverage — 0.1.4
 
 See `FIX_CATALOG.md` for the user-facing symptom and corrected-behavior
 description of every family.
@@ -37,7 +37,7 @@ Status vocabulary:
 | I39 | W/STEP arrival-fuel sign and display-unit conversion | included in 0.1.2; focused behavior and FMS composition PASS |
 | I40 | VI prescribed heading, native feedback/publication lifetime, ground V-heading arming within 5 degrees | source/package checks PASS; native non-VI TRUE/HOLD and full flight resolution remain open |
 
-Version 0.1.3 contains 22 catalog families, 20 with Lua changes in 19
+Version 0.1.4 contains 22 catalog families, 20 with Lua changes in 19
 payload documents. Standalone includes 18 families in 17 payload documents.
 I02 remains a separate repair from I40. Where their exact installed signatures
 share a Lua block, that block includes both changes to preserve reapplication.

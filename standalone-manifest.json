@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "packageId": "wahltho.zibo-40535.intentional-fixes.clean-only",
-  "packageVersion": "0.1.3",
+  "packageVersion": "0.1.4",
   "displayName": "Zibo / LevelUp 737NG Intentional Fixes (Clean .35 only)",
   "aircraftFamilies": [
     "Zibo B737-800X",
@@ -10,7 +10,7 @@
   "target": {
     "relativePath": "plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua",
     "sourceSha256": "ff313b0e88c62845ad1c4a2b1f4bd599f57d8799e8d6707bfc10a3369fd63a8e",
-    "resultSha256": "233ec98c96cfd3c0ac171583882b1e6d39da83bdc9f4a7e4d190e1cc6e41f48f",
+    "resultSha256": "0e2d97a64e985801b0a9b460bfcc430ed32a1510c05c6432a928f23021323898",
     "baselineId": "zibo-4.05.35-shared-by-zibo-and-levelup"
   },
   "includedFamilies": [
@@ -124,8 +124,8 @@
     },
     {
       "path": "src/fixes/i40-vi-heading-and-ground-lnav.json",
-      "size": 477984,
-      "sha256": "bb642ad3928f4e445afcde6921dc5429e60812e880635167a4c7bd85ad47302e"
+      "size": 478647,
+      "sha256": "09fb10a91455a5f09718f69678b4a51e7ad84ebffe79876cfacb7e36bcb8f54c"
     }
   ]
 }

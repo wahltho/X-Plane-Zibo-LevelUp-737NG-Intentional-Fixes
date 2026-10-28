@@ -19,7 +19,7 @@ class MtkPackageTests(unittest.TestCase):
     def test_schema5_contract_and_payloads(self) -> None:
         manifest = json.loads((ROOT / "package-manifest.json").read_text(encoding="utf-8"))
         self.assertEqual(5, manifest["schemaVersion"])
-        self.assertEqual("0.1.3", manifest["packageVersion"])
+        self.assertEqual("0.1.4", manifest["packageVersion"])
         self.assertEqual(["zibo-737ng", "levelup-737ng"], manifest["supportedProducts"])
         self.assertEqual(
             ["intentional-fixes-zibo", "intentional-fixes-levelup"],
@@ -54,7 +54,7 @@ class MtkPackageTests(unittest.TestCase):
 
     def test_archive_is_deterministic_and_complete(self) -> None:
         with tempfile.TemporaryDirectory(prefix="intentional-mtk-package-") as folder:
-            archive = Path(folder) / "X-Plane-Zibo-LevelUp-737NG-Intentional-Fixes-MTK-v0.1.3.zip"
+            archive = Path(folder) / "X-Plane-Zibo-LevelUp-737NG-Intentional-Fixes-MTK-v0.1.4.zip"
             command = [sys.executable, str(BUILDER), "--check", "--archive", str(archive)]
             subprocess.run(command, cwd=ROOT, check=True, capture_output=True)
             first = archive.read_bytes()

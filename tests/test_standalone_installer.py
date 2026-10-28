@@ -19,7 +19,7 @@ DEFAULT_BASELINE = Path(
 SOURCE_HASH = "ff313b0e88c62845ad1c4a2b1f4bd599f57d8799e8d6707bfc10a3369fd63a8e"
 # Expected bytes include the I02 repair and I40, alongside the existing fixes.
 # Installer lifecycle assertions and the verified clean-source hash stay intact.
-RESULT_HASH = "233ec98c96cfd3c0ac171583882b1e6d39da83bdc9f4a7e4d190e1cc6e41f48f"
+RESULT_HASH = "0e2d97a64e985801b0a9b460bfcc430ed32a1510c05c6432a928f23021323898"
 RELATIVE_TARGET = Path("plugins/xlua/scripts/B738.a_fms/B738.a_fms.lua")
 
 

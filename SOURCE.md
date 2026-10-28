@@ -19,6 +19,7 @@ The standalone installer accepts only the untouched original Zibo 4.05.35 Lua:
 | Historical intermediate I30-only result (not released) | `01bf0a2c2cd873c8880cafed4e3925412afb26c02b4ded57b1e4f46d0e1299de` |
 | Version 0.1.2 standalone result (I30 + I37-I39) | `48e000794942a37ae661a80f52d2d099b4469528825e42871503e57ca2d2d444` |
 | Version 0.1.3 standalone result (I02 repair + I40) | `233ec98c96cfd3c0ac171583882b1e6d39da83bdc9f4a7e4d190e1cc6e41f48f` |
+| Version 0.1.4 standalone result (deferred LNAV registration) | `0e2d97a64e985801b0a9b460bfcc430ed32a1510c05c6432a928f23021323898` |
 
 The two input files were byte-identical when checked. The LevelUp product
 version is not a separate Lua baseline for this release.
